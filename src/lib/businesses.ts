@@ -5,7 +5,7 @@ export const API_BASE = process.env.NEXT_PUBLIC_API_URL || "/api";
 
 export type BusinessConfig = {
   id: string;
-  img?: string;
+  img: string;
   bg?: string;
   /** null means dummy/static — no real backend business */
   businessId: string | null;
