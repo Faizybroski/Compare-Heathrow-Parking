@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import {
   BUSINESSES,
@@ -38,20 +39,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
+import { DateTimePicker } from "@/components/ui/DatePicker";
 
-// ─── Figma image assets (valid for 7 days) ────────────────────────────────────
-const imgSubtract =
-  "https://www.figma.com/api/mcp/asset/2ef271c2-274d-4c93-a665-38c0bedf1f80";
-const imgRectangle1 =
-  "https://www.figma.com/api/mcp/asset/78e1b05f-05a8-4102-9e94-ed993695dae0";
-const imgRectangle2 =
-  "https://www.figma.com/api/mcp/asset/3216232e-af87-4a07-9e7a-2806971a1652";
-const imgSarahJenkins =
-  "https://www.figma.com/api/mcp/asset/9b8b8edb-9810-4ba1-a890-cf8f2d68f9f3";
-const imgDavidChen =
-  "https://www.figma.com/api/mcp/asset/ff12d629-64b6-43a8-80c5-8fbccba38709";
-const imgEmmaThompson =
-  "https://www.figma.com/api/mcp/asset/002688f5-16f8-4700-b4f1-abf7763067e5";
+// // ─── Figma image assets (valid for 7 days) ────────────────────────────────────
+// const imgSarahJenkins =
+//   "https://www.figma.com/api/mcp/asset/9b8b8edb-9810-4ba1-a890-cf8f2d68f9f3";
+// const imgDavidChen =
+//   "https://www.figma.com/api/mcp/asset/ff12d629-64b6-43a8-80c5-8fbccba38709";
+// const imgEmmaThompson =
+//   "https://www.figma.com/api/mcp/asset/002688f5-16f8-4700-b4f1-abf7763067e5";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 type BusinessPrice = {
@@ -137,21 +133,21 @@ const testimonials = [
       "Saved £45 on my 2-week trip to Dubai. The site is incredibly easy to use and ParkEase was fantastic. Highly recommended!",
     name: "Sarah Jenkins",
     role: "Business Traveler",
-    avatar: imgSarahJenkins,
+    avatar: "/Sarah Jenkins.svg",
   },
   {
     quote:
       "Found a great Meet & Greet deal for Terminal 5. Traveling with 3 kids is hard enough, this made it stress-free and cheap.",
     name: "David Chen",
     role: "Family Holiday",
-    avatar: imgDavidChen,
+    avatar: "/David Chen.svg",
   },
   {
     quote:
       "Much better than booking direct with the airport. It took 30 seconds to find a secure park and ride that was half the price.",
     name: "Emma Thompson",
     role: "Weekend Getaway",
-    avatar: imgEmmaThompson,
+    avatar: "/Emma Thompson.svg",
   },
 ];
 
@@ -338,8 +334,12 @@ function ParkingCard({
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
 export default function CompareHeathrowParking() {
+  const router = useRouter();
   const [dropOff, setDropOff] = useState("");
   const [pickUp, setPickUp] = useState("");
+  const [searchError, setSearchError] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   // prices keyed by business id
@@ -376,6 +376,15 @@ export default function CompareHeathrowParking() {
         );
     });
   }, []);
+
+  const handleQuickBook = (e: React.SyntheticEvent) => {
+    e.preventDefault();
+    if (startDate && endDate) {
+      router.push(`/book?start=${startDate}&end=${endDate}`);
+    } else {
+      router.push("/book");
+    }
+  };
 
   // recalculate prices whenever both dates are chosen
   const fetchCalculatedPrices = useCallback(
@@ -428,10 +437,37 @@ export default function CompareHeathrowParking() {
 
   const datesSelected = Boolean(dropOff && pickUp);
 
+  const handleSearch = () => {
+    setSearchError("");
+    if (!startDate || !endDate) {
+      setSearchError("Please select both a drop-off and pick-up date & time.");
+      return;
+    }
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    if (start <= new Date()) {
+      setSearchError("Drop-off must be in the future.");
+      return;
+    }
+    if (end <= start) {
+      setSearchError("Pick-up must be after drop-off.");
+      return;
+    }
+    router.push(
+      `/book?start=${encodeURIComponent(start.toISOString())}&end=${encodeURIComponent(end.toISOString())}`,
+    );
+  };
+
+  const scrollToSearch = () => {
+    document
+      .getElementById("search")
+      ?.scrollIntoView({ behavior: "smooth", block: "center" });
+  };
+
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
       {/* ── HERO ───────────────────────────────────────────────────────────── */}
-      <section className="relative  bg-[url('/hero.svg')] object-cover bg-cover pointer-events-none ">
+      <section className="relative bg-[url('/hero.svg')] object-cover bg-cover">
         <div className="absolute -left-12 -top-20 w-[500px] h-[380px] rounded-full bg-primary/10 blur-[50px]" />
         <div className="absolute right-0 top-0 w-[380px] h-[290px] rounded-full bg-primary/10 blur-[50px]" />
 
@@ -458,7 +494,10 @@ export default function CompareHeathrowParking() {
               60% on secure, verified airport parking without the hidden fees.
             </p>
 
-            <PrimaryButton className="px-8 text-base font-bold">
+            <PrimaryButton
+              onClick={scrollToSearch}
+              className="px-8 text-base font-bold"
+            >
               Compare Prices Now
             </PrimaryButton>
           </div>
@@ -531,76 +570,99 @@ export default function CompareHeathrowParking() {
         </div>
 
         {/* ── SEARCH FORM ────────────────────────────────────────────────────── */}
-        <section className="z-20 flex justify-center mt-8 px-4 sm:px-6 mb-12">
+        <section
+          id="search"
+          className="z-96 flex justify-center mt-8 px-4 sm:px-6 mb-12"
+        >
           <Card className="w-full max-w-4xl backdrop-blur-md bg-background/95 border-white/20 shadow-2xl">
             <CardContent className="p-4 sm:p-8">
-              <div className="flex flex-col sm:flex-row items-end gap-4 mb-6">
-                <div className="flex-1 w-full">
-                  <Label className="text-sm font-medium text-foreground mb-2 block">
-                    Drop-off Date
-                  </Label>
-                  <div className="relative">
-                    <CalendarDays className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
-                    <Input
-                      type="date"
-                      value={dropOff}
-                      onChange={(e) => handleDropOffChange(e.target.value)}
-                      className="rounded-full pl-10"
-                    />
+              <form onSubmit={handleQuickBook} >
+                {/* Date row */}
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-end gap-4 mb-4">
+                  <div className="flex-1 w-full">
+                    <Label className="text-sm font-medium text-foreground mb-2 block">
+                      Drop-off Date &amp; Time
+                    </Label>
+                    {/* <div className="relative"> */}
+                      {/* <CalendarDays className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none z-10" /> */}
+                      <DateTimePicker
+                        value={startDate}
+                        onChange={(val) => {
+                          setSearchError("");
+                          setStartDate(val);
+                          if (val && endDate) fetchCalculatedPrices(val, endDate);
+                        }}
+                      />
+                    {/* </div> */}
                   </div>
-                </div>
-                <div className="flex-1 w-full">
-                  <Label className="text-sm font-medium text-foreground mb-2 block">
-                    Pick-up Date
-                  </Label>
-                  <div className="relative">
-                    <CalendarDays className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
-                    <Input
-                      type="date"
-                      value={pickUp}
-                      onChange={(e) => handlePickUpChange(e.target.value)}
-                      className="rounded-full pl-10"
-                    />
+                  <div className="flex-1 w-full">
+                    <Label className="text-sm font-medium text-foreground mb-2 block">
+                      Pick-up Date &amp; Time
+                    </Label>
+                    {/* <div className="relative"> */}
+                      {/* <CalendarDays className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none z-10" /> */}
+                      <DateTimePicker
+                        value={endDate}
+                        onChange={(val) => {
+                          setSearchError("");
+                          setEndDate(val);
+                          if (startDate && val) fetchCalculatedPrices(startDate, val);
+                        }}
+                      />
+                    {/* </div> */}
                   </div>
+                  <Button
+                    // type="button"
+                    // onClick={handleSearch}
+                    className="w-full sm:w-auto px-8 py-3.5 text-base font-semibold whitespace-nowrap shrink-0"
+                  >
+                    <Search className="w-4 h-4 mr-2" />
+                    Search
+                  </Button>
                 </div>
-                <PrimaryButton className="w-full sm:w-auto px-8 text-base font-semibold whitespace-nowrap">
-                  Search
-                </PrimaryButton>
-              </div>
 
-              <div className="border-t pt-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="text-sm text-muted-foreground font-medium">
-                    Filter by:
-                  </span>
-                  {["Meet & Greet", "Park & Ride", "On-Airport"].map((f) => (
+                {/* Validation error */}
+                {searchError && (
+                  <p className="text-sm text-destructive mb-4 flex items-center gap-1.5">
+                    <XCircle className="w-4 h-4 shrink-0" />
+                    {searchError}
+                  </p>
+                )}
+
+                <div className="border-t pt-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-sm text-muted-foreground font-medium">
+                      Filter by:
+                    </span>
+                    {["Meet & Greet", "Park & Ride", "On-Airport"].map((f) => (
+                      <Button
+                        key={f}
+                        variant="ghost"
+                        size="sm"
+                        className="rounded-full text-primary bg-primary/5 hover:bg-primary/10 text-xs"
+                      >
+                        {f}
+                      </Button>
+                    ))}
+                  </div>
+                  <div className="flex items-center gap-2">
                     <Button
-                      key={f}
                       variant="ghost"
                       size="sm"
-                      className="rounded-full text-primary bg-primary/5 hover:bg-primary/10 text-xs"
+                      className="rounded-full text-primary bg-primary/5 text-xs gap-1.5"
                     >
-                      {f}
+                      <LayoutGrid className="w-3.5 h-3.5" /> Card View
                     </Button>
-                  ))}
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="rounded-lg text-muted-foreground text-xs gap-1.5"
+                    >
+                      <List className="w-3.5 h-3.5" /> List View
+                    </Button>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="rounded-full text-primary bg-primary/5 text-xs gap-1.5"
-                  >
-                    <LayoutGrid className="w-3.5 h-3.5" /> Card View
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="rounded-lg text-muted-foreground text-xs gap-1.5"
-                  >
-                    <List className="w-3.5 h-3.5" /> List View
-                  </Button>
-                </div>
-              </div>
+              </form>
             </CardContent>
           </Card>
         </section>
@@ -992,50 +1054,33 @@ export default function CompareHeathrowParking() {
         </section>
 
         {/* ── CTA BANNER ─────────────────────────────────────────────────────── */}
-        <section className="py-10 sm:py-12 px-4 sm:px-8 lg:px-16">
-          <div className="max-w-6xl mx-auto rounded-[2rem] overflow-hidden relative py-12 sm:py-16 text-center">
-            <div className="absolute inset-0" />
-            <div className="absolute inset-0 overflow-hidden">
-              {/* <Image src={"/cta.svg"} alt="" fill /> */}
-              <div className="relative rounded-[38px] overflow-hidden">
-                <div className="absolute inset-0 bg-[radial-gradient(140%_64%_at_0%_63%,#AA10EC_2%,#641188_100%)]" />
-                <svg width="0" height="0" style={{ position: "absolute" }}>
-                  <filter id="noiseFilter">
-                    <feTurbulence
-                      type="fractalNoise"
-                      baseFrequency="0.8"
-                      numOctaves="4"
-                      stitchTiles="stitch"
-                    />
-                    <feColorMatrix type="saturate" values="0" />
-                  </filter>
-                </svg>
-                <Image
-                  src="/cta1.svg"
-                  width={300}
-                  height={200}
-                  className="absolute inset-0 w-full h-full object-cover opacity-80"
-                  alt={"cta"}
-                />
-
-                <div
-                  className="absolute inset-0 opacity-[0.25] pointer-events-none mix-blend-soft-light"
-                  style={{ filter: "url(#noiseFilter)" }}
-                />
-              </div>
+        <section className="py-8 sm:py-12 px-4 sm:px-8 lg:px-16">
+          <div className="max-w-6xl mx-auto rounded-[1.5rem] sm:rounded-[2rem] overflow-hidden relative min-h-[260px] sm:min-h-[320px] flex items-center justify-center text-center">
+            {/* Background SVG fills the container */}
+            <div className="absolute inset-0">
+              <Image
+                src="/cta.svg"
+                alt=""
+                fill
+                sizes="(max-width: 640px) 100vw, (max-width: 1280px) 90vw, 1152px"
+                className="object-cover"
+                priority={false}
+              />
             </div>
-            {/* <div className="absolute -right-32 -top-32 w-64 h-64 rounded-full bg-white/10 blur-[32px]" />
-          <div className="absolute -left-32 -bottom-32 w-64 h-64 rounded-full bg-black/10 blur-[32px]" /> */}
 
-            <div className="relative z-10 px-4">
-              <h2 className="font-bold text-white text-2xl sm:text-[35px] sm:leading-[48px] mb-4">
+            <div className="relative z-10 px-6 sm:px-12 py-10 sm:py-0 w-full">
+              <h2 className="font-bold text-white text-xl xs:text-2xl sm:text-[35px] sm:leading-[48px] mb-3 sm:mb-4 max-w-2xl mx-auto">
                 Find the Best Heathrow Parking Deal Today
               </h2>
-              <p className="text-white/90 text-sm sm:text-base leading-relaxed max-w-[716px] mx-auto mb-8">
+              <p className="text-white/90 text-sm sm:text-base leading-relaxed max-w-xl sm:max-w-[716px] mx-auto mb-6 sm:mb-8">
                 Stop searching multiple sites. Enter your dates once and let us
                 find the cheapest, most secure parking for your trip.
               </p>
-              <button className="bg-white text-primary font-semibold text-base sm:text-lg px-8 py-3 sm:py-4 rounded-full shadow-xl hover:bg-white/90 transition-colors">
+              <button
+                type="button"
+                onClick={scrollToSearch}
+                className="bg-white text-primary font-semibold text-sm sm:text-base lg:text-lg px-6 sm:px-8 py-3 sm:py-4 rounded-full shadow-xl hover:bg-white/90 active:scale-95 transition-all"
+              >
                 Compare Prices Now
               </button>
             </div>

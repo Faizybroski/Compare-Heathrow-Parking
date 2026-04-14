@@ -4,9 +4,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 
-const imgGradientBg =
-  "https://www.figma.com/api/mcp/asset/d3f0dc2f-5c9f-4084-aa74-c1c48c2fbe1a";
-
 export default function Footer() {
   const pathname = usePathname();
   if (pathname.startsWith("/admin")) return null;
@@ -15,9 +12,9 @@ export default function Footer() {
     <footer className="relative rounded-tl-[42px] rounded-tr-[42px] overflow-hidden">
       {/* Background image */}
       <div className="absolute inset-0">
-        <Image src={imgGradientBg} alt="" fill className="object-cover" />
+        <Image src={"/footer.svg"} alt="" fill className="object-cover" />
       </div>
-      <div className="absolute inset-0 bg-black/50 rounded-tl-[42px] rounded-tr-[42px]" />
+      <div className="absolute inset-0 bg-black/10 rounded-tl-[42px] rounded-tr-[42px]" />
 
       <div className="relative z-10 px-4 sm:px-8 lg:px-10 pt-8 sm:pt-10 pb-6">
         {/* Top white card */}
