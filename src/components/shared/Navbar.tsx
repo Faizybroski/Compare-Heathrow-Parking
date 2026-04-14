@@ -10,6 +10,7 @@ import { Menu, X } from "lucide-react";
 const navLinks = [
   { href: "/", label: "Home" },
   { href: "/book", label: "Book Now" },
+  { href: "/pricing", label: "Pricing" },
   { href: "/track", label: "Track Booking" },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
@@ -41,13 +42,14 @@ export default function Navbar() {
               {label}
             </Link>
           ))}
-          <button className="bg-white text-primary text-sm font-bold px-6 py-2 rounded-full shadow-[0_0_20px_rgba(122,63,255,0.3)] hover:bg-white/90 transition-colors">
+          <button type="button" className="bg-white text-primary text-sm font-bold px-6 py-2 rounded-full shadow-[0_0_20px_rgba(122,63,255,0.3)] hover:bg-white/90 transition-colors">
             Compare Now
           </button>
         </div>
 
         {/* Mobile hamburger */}
         <button
+          type="button"
           onClick={() => setIsOpen(!isOpen)}
           className="lg:hidden text-white p-2 rounded-lg hover:bg-white/10 transition-colors"
           aria-label="Toggle menu"
@@ -74,7 +76,7 @@ export default function Navbar() {
                 {label}
               </a>
             ))}
-            <button className="mt-2 bg-white text-primary text-sm font-bold px-6 py-3 rounded-full hover:bg-white/90 transition-colors w-full">
+            <button type="button" className="mt-2 bg-white text-primary text-sm font-bold px-6 py-3 rounded-full hover:bg-white/90 transition-colors w-full">
               Compare Now
             </button>
           </div>

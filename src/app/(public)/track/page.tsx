@@ -4,6 +4,8 @@ import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { api } from "@/lib/api";
 import { Booking } from "@/types";
+import { getBrandByBusinessId } from "@/lib/businesses";
+import Image from "next/image";
 import PageHero from "@/components/shared/PageHero";
 import {
   formatDayCount,
@@ -45,7 +47,7 @@ function TrackContent() {
     setSearched(true);
 
     try {
-      const res = await api.trackBooking(normalizedTracking);
+      const res = await api.trackBookingForCompare(normalizedTracking);
       setBooking(res.data);
     } catch (err: unknown) {
       if (showLoader) {
@@ -127,6 +129,21 @@ function TrackContent() {
 
         {booking && (
           <div className="space-y-4 animate-fade-in">
+            {/* Service provider banner — shown for compare bookings */}
+            {booking.bookedVia === "heathrowcompare" && booking.businessId && (() => {
+              const brand = getBrandByBusinessId(booking.businessId);
+              return brand ? (
+                <div className="flex items-center gap-3 rounded-xl border border-purple-200 bg-purple-50 px-4 py-3">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${brand.bg}`}>
+                    <Image src={brand.img} alt={brand.name} width={16} height={16} />
+                  </div>
+                  <p className="text-sm text-purple-800">
+                    Service provided by <strong>{brand.name}</strong> — booked via Heathrow Compare Parking
+                  </p>
+                </div>
+              ) : null;
+            })()}
+
             <Card className="flex flex-col items-center rounded-2xl border border-primary bg-card p-6 text-center text-card-foreground ring-0 lg:p-8">
               <Badge
                 className={`inline-flex rounded-full p-4 text-sm font-bold uppercase ${getStatusColor(booking.status)}`}

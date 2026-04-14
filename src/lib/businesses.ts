@@ -75,6 +75,10 @@ export const BUSINESSES: BusinessConfig[] = [
   },
 ];
 
+/** Returns the BusinessConfig for a given businessId, or undefined if not found. */
+export const getBrandByBusinessId = (businessId: string): BusinessConfig | undefined =>
+  BUSINESSES.find((b) => b.businessId === businessId);
+
 /** Fetch any business API endpoint with the given business ID header. */
 export async function fetchForBusiness<T>(
   endpoint: string,

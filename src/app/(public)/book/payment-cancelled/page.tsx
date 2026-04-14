@@ -1,19 +1,22 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { XCircle, Loader2 } from "lucide-react";
+import { getBrandByBusinessId } from "@/lib/businesses";
 
 function PaymentCancelledContent() {
   const searchParams = useSearchParams();
-  // Preserve any date params from the original booking URL so the user can
-  // jump straight back to the form with dates pre-filled.
   const start = searchParams.get("start");
   const end = searchParams.get("end");
+  const brandId = searchParams.get("brand");
   const bookAgainHref =
     start && end ? `/book?start=${start}&end=${end}` : "/book";
+
+  const brand = brandId ? getBrandByBusinessId(brandId) : undefined;
 
   return (
     <div className="min-h-screen py-20 bg-muted/40 flex items-center justify-center">
@@ -32,6 +35,21 @@ function PaymentCancelledContent() {
             ready.
           </p>
         </div>
+
+        {/* Service provider note */}
+        {brand && (
+          <div className="flex items-center gap-3 rounded-xl border border-purple-200 bg-purple-50 px-4 py-3 text-left">
+            <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${brand.bg}`}>
+              <Image src={brand.img} alt={brand.name} width={18} height={18} />
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-purple-900">
+                Service provided by {brand.name}
+              </p>
+              <p className="text-xs text-purple-600">Booked via Heathrow Compare Parking</p>
+            </div>
+          </div>
+        )}
 
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <Button asChild>

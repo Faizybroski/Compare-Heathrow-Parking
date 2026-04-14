@@ -12,7 +12,7 @@ export default function Footer() {
   if (pathname.startsWith("/admin")) return null;
 
   return (
-    <footer className="relative mt-4 rounded-tl-[42px] rounded-tr-[42px] overflow-hidden">
+    <footer className="relative rounded-tl-[42px] rounded-tr-[42px] overflow-hidden">
       {/* Background image */}
       <div className="absolute inset-0">
         <Image src={imgGradientBg} alt="" fill className="object-cover" />
@@ -21,17 +21,22 @@ export default function Footer() {
 
       <div className="relative z-10 px-4 sm:px-8 lg:px-10 pt-8 sm:pt-10 pb-6">
         {/* Top white card */}
-        <div className="bg-white rounded-[24px] sm:rounded-[34px] p-6 sm:p-10 mb-8 sm:mb-10 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6 sm:gap-8 lg:gap-10">
+        <div className="bg-white rounded-[24px] sm:rounded-[34px] p-6 sm:p-10 mb-8 sm:mb-10 grid grid-cols-2  lg:grid-cols-4 gap-6 ">
           {/* Brand – spans full width on mobile, 2 cols on sm, 1 col on lg */}
-          <div className="col-span-2 sm:col-span-3 lg:col-span-1">
+          <div className="col-span-2 sm:col-span-4 lg:col-span-1">
             <Link href="/" className="inline-flex mb-5">
-              <Image src="/purple_logo.svg" alt="Logo" width={200} height={80} />
+              <Image
+                src="/purple_logo.svg"
+                alt="Logo"
+                width={200}
+                height={80}
+              />
             </Link>
             <p className="text-muted-foreground text-sm leading-relaxed max-w-[252px] mb-6">
               The smart way to find, compare, and save on airport parking at
               London Heathrow.
             </p>
-            <div className="flex gap-2">
+            {/* <div className="flex gap-2">
               {["f", "t", "in"].map((s) => (
                 <div
                   key={s}
@@ -40,53 +45,97 @@ export default function Footer() {
                   {s}
                 </div>
               ))}
-            </div>
+            </div> */}
           </div>
 
-          {/* Services */}
+          {/* Quick Links */}
           <div>
-            <h4 className="font-bold text-foreground text-base mb-4">Services</h4>
-            {["Meet & Greet", "Park & Ride", "On-Airport Parking", "Long Stay"].map(
-              (l) => (
-                <p key={l} className="text-muted-foreground text-sm mb-2">
-                  {l}
-                </p>
-              ),
-            )}
+            <h4 className="font-bold text-foreground text-base mb-4">
+              Quick Links
+            </h4>
+            <ul className="space-y-2 text-sm">
+              {[
+                { href: "/", label: "Home" },
+                { href: "/book", label: "Book Parking" },
+                { href: "/track", label: "Track Booking" },
+                { href: "/about", label: "About Us" },
+              ].map(({ href, label }) => (
+                <li key={href}>
+                  <Link
+                    href={href}
+                    className="opacity-70 hover:opacity-100 transition"
+                  >
+                    {label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </div>
 
-          {/* Company */}
+          {/* Support */}
           <div>
-            <h4 className="font-bold text-foreground text-base mb-4">Company</h4>
-            {["About Us", "Providers", "Contact", "Blog"].map((l) => (
-              <p key={l} className="text-muted-foreground text-sm mb-2">
-                {l}
-              </p>
-            ))}
+            <h4 className="font-bold text-foreground text-base mb-4">
+              Support
+            </h4>
+            <ul className="space-y-2 text-sm">
+              {[
+                { href: "/faqs", label: "FAQs" },
+                { href: "/contact", label: "Contact Us" },
+                { href: "/support", label: "Support" },
+              ].map(({ href, label }) => (
+                <li key={href}>
+                  <Link
+                    href={href}
+                    className="opacity-70 hover:opacity-100 transition"
+                  >
+                    {label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </div>
 
           {/* Legal */}
           <div>
-            <h4 className="font-bold text-foreground text-base mb-4">Legal</h4>
-            {["Terms of Service", "Privacy Policy", "Cookie Policy", "FAQ"].map(
-              (l) => (
-                <p key={l} className="text-muted-foreground text-sm mb-2">
-                  {l}
-                </p>
-              ),
-            )}
+            <h4 className="font-bold text-foreground text-base mb-4">
+              Contact Us
+            </h4>
+            <div className="space-y-3 text-sm">
+              <div className="flex items-start gap-3 opacity-70 hover:opacity-100 transition">
+                {/* <MapPin className="w-4 h-4 mt-1 shrink-0" /> */}
+                <a
+                  href="https://maps.app.goo.gl/5Kpmej29MWZ5qRbD7"
+                  target="_blank"
+                  className="leading-snug"
+                >
+                  103 Pennine Way <br /> UB3 5LJ
+                </a>
+              </div>
+
+              <div className="flex items-center gap-3 opacity-70 hover:opacity-100 transition">
+                {/* <Phone className="w-4 h-4 shrink-0" /> */}
+                <a href="tel:07508624155">07508624155</a>
+              </div>
+
+              <div className="flex items-center gap-3 opacity-70 hover:opacity-100 transition">
+                {/* <Mail className="w-4 h-4 shrink-0" /> */}
+                <a href="mailto:info@compareheathrowparking.uk">
+                  info@compareheathrowparking.uk
+                </a>
+              </div>
+            </div>
           </div>
 
           {/* CTA */}
-          <div className="flex flex-col sm:items-start lg:items-end">
+          {/* <div className="flex flex-col sm:items-start lg:items-end">
             <button className="bg-purple-grad text-white text-sm font-semibold px-6 py-2 rounded-full mb-4 hover:opacity-90 transition-opacity">
               Request a call
             </button>
             <div className="flex flex-col items-start sm:items-start lg:items-end gap-1">
               <p className="font-semibold text-foreground text-sm">07508624155</p>
-              <p className="font-semibold text-foreground text-sm">info@compareheathrowparking.uk</p>
+              <p className="font-semibold text-foreground text-sm ">info@compareheathrowparking.uk</p>
             </div>
-          </div>
+          </div> */}
         </div>
 
         {/* Newsletter row */}

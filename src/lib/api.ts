@@ -91,7 +91,7 @@ class ApiClient {
         "Content-Type": "application/json",
       },
       credentials: "include",
-      body: JSON.stringify(data),
+      body: JSON.stringify({ ...data, bookedVia: "heathrowcompare" }),
     });
     if (!res.ok) {
       const error = await res.json().catch(() => ({ message: "Network error" }));
@@ -110,6 +110,29 @@ class ApiClient {
 
   async trackBooking(trackingNumber: string): Promise<ApiResponse<Booking>> {
     return this.request(`/bookings/${trackingNumber}`);
+  }
+
+  /**
+   * Track a booking from the compare site — searches both real businesses
+   * (ParkPro then Heathrow Safe Parking) and returns whichever finds it.
+   */
+  async trackBookingForCompare(trackingNumber: string): Promise<ApiResponse<Booking>> {
+    const realBusinessIds = ["69c58c8616860ff720b40e4c", "69d3f081f2245d52c5927d3d"];
+    let lastError: Error = new Error("Booking not found");
+    for (const bid of realBusinessIds) {
+      try {
+        const res = await fetch(`${API_BASE}/bookings/${encodeURIComponent(trackingNumber)}`, {
+          headers: { "X-Business-Id": bid, "Content-Type": "application/json" },
+          credentials: "include",
+        });
+        if (res.ok) {
+          return res.json();
+        }
+      } catch (err) {
+        lastError = err instanceof Error ? err : new Error(String(err));
+      }
+    }
+    throw lastError;
   }
 
   async calculatePrice(
@@ -225,10 +248,21 @@ class ApiClient {
   }
 
   async contact(data: { name: string; email: string; message: string }) {
-    return this.request("/contact", {
+    // Use the compare site's own email config for contact form submissions.
+    const res = await fetch(`${API_BASE}/contact`, {
       method: "POST",
+      headers: {
+        "X-Business-Id": "compare",
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
       body: JSON.stringify(data),
     });
+    if (!res.ok) {
+      const error = await res.json().catch(() => ({ message: "Network error" }));
+      throw new Error(error.message || `HTTP ${res.status}`);
+    }
+    return res.json();
   }
 }
 

@@ -3,8 +3,10 @@
 import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { Booking } from "@/types";
 import { api } from "@/lib/api";
+import { getBrandByBusinessId } from "@/lib/businesses";
 import { formatDateTime, formatDayCount, formatPrice } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -80,6 +82,11 @@ function PaymentSuccessContent() {
     );
   }
 
+  const brand =
+    booking.bookedVia === "heathrowcompare" && booking.businessId
+      ? getBrandByBusinessId(booking.businessId)
+      : undefined;
+
   return (
     <div className="min-h-screen py-12 bg-muted pt-24">
       <div className="max-w-2xl mx-auto px-4 space-y-6">
@@ -91,6 +98,21 @@ function PaymentSuccessContent() {
             A confirmation email has been sent to {booking.userEmail}
           </p>
         </div>
+
+        {/* Service provider banner */}
+        {brand && (
+          <div className="flex items-center gap-3 rounded-xl border border-purple-200 bg-purple-50 px-4 py-3">
+            <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${brand.bg}`}>
+              <Image src={brand.img} alt={brand.name} width={18} height={18} />
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-purple-900">
+                Service provided by {brand.name}
+              </p>
+              <p className="text-xs text-purple-600">Booked via Heathrow Compare Parking</p>
+            </div>
+          </div>
+        )}
 
         {/* Tracking number */}
         <Card className="rounded-2xl p-6 text-center flex flex-col items-center lg:p-8 bg-card text-card-foreground border border-primary ring-0">

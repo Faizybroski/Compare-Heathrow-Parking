@@ -25,7 +25,12 @@ import {
   PiggyBank,
   XCircle,
   CalendarDays,
-  BadgeCheck,Target, ShieldAlert, Search, SlidersHorizontal, CircleCheck
+  BadgeCheck,
+  Target,
+  ShieldAlert,
+  Search,
+  SlidersHorizontal,
+  CircleCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -63,12 +68,12 @@ const steps = [
     desc: "Our engine scans real-time availability.",
   },
   {
-    icon: <SlidersHorizontal  className="w-8 h-8 text-primary" />,
+    icon: <SlidersHorizontal className="w-8 h-8 text-primary" />,
     title: "Compare in real-time",
     desc: "Filter by price, transfer time, or rating.",
   },
   {
-    icon: <CircleCheck  className="w-8 h-8 text-primary" />,
+    icon: <CircleCheck className="w-8 h-8 text-primary" />,
     title: "You choose",
     desc: "Select the deal that perfectly fits your needs.",
   },
@@ -91,7 +96,7 @@ const whyCards = [
     desc: "Our engine queries live availability in milliseconds.",
   },
   {
-    icon: <ShieldAlert  className="w-6 h-6 text-primary" />,
+    icon: <ShieldAlert className="w-6 h-6 text-primary" />,
     title: "Trusted Providers",
     desc: "Every car park is vetted for security and service.",
   },
@@ -685,12 +690,10 @@ export default function CompareHeathrowParking() {
             </div>
           </div>
         ))}
-      </section> 
+      </section>
 
       {/* ── OUR MISSION / WHY USE US ───────────────────────────────────────── */}
-      <section
-        className="py-16 sm:py-20 px-4 sm:px-8 lg:px-16 max-w-7xl oveflow-hidden mx-auto bg-[url('/circles.svg')] bg-no-repeat bg-position-[center_-10%]"
-      >
+      <section className="py-16 sm:py-20 px-4 sm:px-8 lg:px-16 max-w-7xl oveflow-hidden mx-auto bg-[url('/circles.svg')] bg-no-repeat bg-position-[center_-10%]">
         <div className="flex flex-col lg:flex-row gap-10 lg:gap-16 mb-16 sm:mb-20 items-center lg:items-start">
           <div className="flex-1">
             <h2 className="font-bold text-foreground text-3xl sm:text-4xl mb-4">
@@ -764,7 +767,8 @@ export default function CompareHeathrowParking() {
               </p>
             </div>
             <Button variant="outline" className="shrink-0 rounded-full gap-2">
-              <Check className="w-4 h-4 text-green-600" /> 100% Verified Partners
+              <Check className="w-4 h-4 text-green-600" /> 100% Verified
+              Partners
             </Button>
           </div>
 
@@ -772,10 +776,17 @@ export default function CompareHeathrowParking() {
             {providers.map((p) => (
               <Card key={p.name} className="border">
                 <CardContent className="p-6 sm:p-8 text-center">
-                  <div className={`w-10 h-10 rounded-full ${p.bg} flex items-center justify-center mx-auto mb-4`}>
-                    <Image src={p.img} alt={p.name} width={20} height={20} className="text-xl font-bold text-primary" />
-                      {/* {p.initials} */}
-                    
+                  <div
+                    className={`w-10 h-10 rounded-full ${p.bg} flex items-center justify-center mx-auto mb-4`}
+                  >
+                    <Image
+                      src={p.img}
+                      alt={p.name}
+                      width={20}
+                      height={20}
+                      className="text-xl font-bold text-primary"
+                    />
+                    {/* {p.initials} */}
                   </div>
                   <h3 className="font-bold text-foreground text-xl mb-3">
                     {p.name}
@@ -790,216 +801,247 @@ export default function CompareHeathrowParking() {
         </div>
       </section>
 
-      {/* ── TESTIMONIALS ───────────────────────────────────────────────────── */}
-      <section className="py-16 sm:py-20 px-4 sm:px-8 lg:px-16">
-        <div className="max-w-7xl mx-auto">
-          <h2 className="font-bold text-foreground text-3xl sm:text-4xl text-center mb-2">
-            Travelers Love Us
-          </h2>
-          <p className="text-muted-foreground text-lg text-center mb-10 sm:mb-12">
-            Join thousands of smart travelers who never overpay for parking.
-          </p>
+      <div className="bg-[url('/separate_circles.svg')] bg-no-repeat bg-center">
+        {/* ── TESTIMONIALS ───────────────────────────────────────────────────── */}
+        <section className="py-16 sm:py-20 px-4 sm:px-8 lg:px-16">
+          <div className="max-w-7xl mx-auto">
+            <h2 className="font-bold text-foreground text-3xl sm:text-4xl text-center mb-2">
+              Travelers Love Us
+            </h2>
+            <p className="text-muted-foreground text-lg text-center mb-10 sm:mb-12">
+              Join thousands of smart travelers who never overpay for parking.
+            </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {testimonials.map((t) => (
-              <Card key={t.name} className="border">
-                <CardContent className="p-6 sm:p-8">
-                  <div className="flex gap-1 mb-4">
-                    {[...Array(5)].map((_, i) => (
-                      <Star
-                        key={i}
-                        className="w-4 h-4 text-yellow-500 fill-yellow-500"
-                      />
-                    ))}
-                  </div>
-                  <p className="text-foreground/90 text-base italic leading-relaxed mb-6">
-                    &ldquo;{t.quote}&rdquo;
-                  </p>
-                  <div className="flex items-center gap-3">
-                    <Image
-                      src={t.avatar}
-                      alt={t.name}
-                      width={48}
-                      height={48}
-                      className="rounded-full object-cover border-2 border-primary/10"
-                    />
-                    <div>
-                      <p className="font-bold text-foreground text-sm">
-                        {t.name}
-                      </p>
-                      <p className="text-muted-foreground text-xs">{t.role}</p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {testimonials.map((t) => (
+                <Card key={t.name} className="border">
+                  <CardContent className="p-6 sm:p-8">
+                    <div className="flex gap-1 mb-4">
+                      {[...Array(5)].map((_, i) => (
+                        <Star
+                          key={i}
+                          className="w-4 h-4 text-yellow-500 fill-yellow-500"
+                        />
+                      ))}
                     </div>
+                    <p className="text-foreground/90 text-base italic leading-relaxed mb-6">
+                      &ldquo;{t.quote}&rdquo;
+                    </p>
+                    <div className="flex items-center gap-3">
+                      <Image
+                        src={t.avatar}
+                        alt={t.name}
+                        width={48}
+                        height={48}
+                        className="rounded-full object-cover border-2 border-primary/10"
+                      />
+                      <div>
+                        <p className="font-bold text-foreground text-sm">
+                          {t.name}
+                        </p>
+                        <p className="text-muted-foreground text-xs">
+                          {t.role}
+                        </p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── FAQ ────────────────────────────────────────────────────────────── */}
+        <section id="faq" className="py-16 sm:py-20 px-4 sm:px-8 lg:px-16">
+          <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-10 lg:gap-10 items-start">
+            <div className="flex-1">
+              <h2 className="font-bold text-foreground text-3xl sm:text-4xl mb-2">
+                Frequently Asked Questions
+              </h2>
+              <p className="text-muted-foreground text-lg mb-8">
+                Everything you need to know about comparing and booking.
+              </p>
+
+              <div className="flex flex-col">
+                {faqs.map((q, i) => (
+                  <div key={i} className="border-b">
+                    <button
+                      onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                      className="w-full flex items-center justify-between py-3 text-left"
+                    >
+                      <span className="font-semibold text-foreground text-base sm:text-lg pr-4">
+                        {q}
+                      </span>
+                      <ChevronDown
+                        className={`w-4 h-4 text-muted-foreground shrink-0 transition-transform duration-200 ${
+                          openFaq === i ? "rotate-180" : ""
+                        }`}
+                      />
+                    </button>
+                    {openFaq === i && (
+                      <p className="text-muted-foreground text-sm pb-4 leading-relaxed">
+                        We compare prices from all major trusted Heathrow
+                        parking providers in real-time. Enter your dates, hit
+                        Search, and within seconds you&apos;ll see a ranked list
+                        of available options with transparent pricing — no
+                        hidden costs.
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Right image – hidden on mobile */}
+            <div className="relative shrink-0 hidden lg:block">
+              <div className="relative rounded-lg overflow-hidden w-full sm:w-120 xl:w-[544px] h-[220px] sm:h-[301px] ">
+                <Image
+                  src={"/faqs.svg"}
+                  alt="Airport parking"
+                  fill
+                  sizes="(max-width: 640px) 100vw, 544px"
+                />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ── CONTACT ────────────────────────────────────────────────────────── */}
+        <section
+          id="contact"
+          className="py-16 sm:py-20 px-4 sm:px-8 lg:px-16 bg-muted/10"
+        >
+          <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-10 lg:gap-16">
+            <div className="flex-1 max-w-[560px]">
+              <h2 className="font-bold text-foreground text-3xl sm:text-4xl mb-4">
+                Get in Touch
+              </h2>
+              <p className="text-muted-foreground text-lg leading-relaxed mb-8 sm:mb-10">
+                Have a question about our comparison tool? Want to partner with
+                us? Drop us a message and our team will get back to you within
+                24 hours.
+              </p>
+
+              <div className="flex flex-col gap-6">
+                {[
+                  {
+                    icon: <Mail className="w-5 h-5 text-primary" />,
+                    label: "Email Us",
+                    value: "support@compareheathrowparking.uk",
+                  },
+                  {
+                    icon: <Phone className="w-5 h-5 text-primary" />,
+                    label: "Call Us",
+                    value: "+44 800 123 4567 (Mon-Fri, 9am-5pm)",
+                  },
+                ].map(({ icon, label, value }) => (
+                  <div key={label} className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-full bg-primary/5 flex items-center justify-center shrink-0">
+                      {icon}
+                    </div>
+                    <div>
+                      <p className="font-semibold text-foreground">{label}</p>
+                      <p className="text-muted-foreground text-sm">{value}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex-1 max-w-[576px]">
+              <Card className="shadow-xl rounded-[2rem] sm:rounded-[2.4rem]">
+                <CardContent className="p-6 sm:p-8">
+                  <div className="flex flex-col gap-4">
+                    <div>
+                      <Label className="text-xs font-medium mb-1 block">
+                        Full Name
+                      </Label>
+                      <Input
+                        placeholder="John Doe"
+                        className="rounded-full mt-1"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-xs font-medium mb-1 block">
+                        Email Address
+                      </Label>
+                      <Input
+                        type="email"
+                        placeholder="john@example.com"
+                        className="rounded-full mt-1"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-xs font-medium mb-1 block">
+                        Message
+                      </Label>
+                      <Textarea
+                        rows={5}
+                        placeholder="How can we help you?"
+                        className="rounded-2xl mt-1 resize-none"
+                      />
+                    </div>
+                    <PrimaryButton className="w-full text-base font-semibold">
+                      Send Message
+                    </PrimaryButton>
                   </div>
                 </CardContent>
               </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── FAQ ────────────────────────────────────────────────────────────── */}
-      <section id="faq" className="py-16 sm:py-20 px-4 sm:px-8 lg:px-16">
-        <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-10 lg:gap-10 items-start">
-          <div className="flex-1">
-            <h2 className="font-bold text-foreground text-3xl sm:text-4xl mb-2">
-              Frequently Asked Questions
-            </h2>
-            <p className="text-muted-foreground text-lg mb-8">
-              Everything you need to know about comparing and booking.
-            </p>
-
-            <div className="flex flex-col">
-              {faqs.map((q, i) => (
-                <div key={i} className="border-b">
-                  <button
-                    onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                    className="w-full flex items-center justify-between py-3 text-left"
-                  >
-                    <span className="font-semibold text-foreground text-base sm:text-lg pr-4">
-                      {q}
-                    </span>
-                    <ChevronDown
-                      className={`w-4 h-4 text-muted-foreground shrink-0 transition-transform duration-200 ${
-                        openFaq === i ? "rotate-180" : ""
-                      }`}
-                    />
-                  </button>
-                  {openFaq === i && (
-                    <p className="text-muted-foreground text-sm pb-4 leading-relaxed">
-                      We compare prices from all major trusted Heathrow parking
-                      providers in real-time. Enter your dates, hit Search, and
-                      within seconds you&apos;ll see a ranked list of available
-                      options with transparent pricing — no hidden costs.
-                    </p>
-                  )}
-                </div>
-              ))}
             </div>
           </div>
+        </section>
 
-          {/* Right image – hidden on mobile */}
-          <div className="relative shrink-0 hidden lg:block">
-            <div className="relative rounded-lg overflow-hidden w-full sm:w-120 xl:w-[544px] h-[220px] sm:h-[301px] ">
-              <Image
-                src={"/faqs.svg"}
-                alt="Airport parking"
-                fill
-                sizes="(max-width: 640px) 100vw, 544px"
-              />
+        {/* ── CTA BANNER ─────────────────────────────────────────────────────── */}
+        <section className="py-10 sm:py-12 px-4 sm:px-8 lg:px-16">
+          <div className="max-w-6xl mx-auto rounded-[2rem] overflow-hidden relative py-12 sm:py-16 text-center">
+            <div className="absolute inset-0" />
+            <div className="absolute inset-0 overflow-hidden">
+              {/* <Image src={"/cta.svg"} alt="" fill /> */}
+              <div className="relative rounded-[38px] overflow-hidden">
+                <div className="absolute inset-0 bg-[radial-gradient(140%_64%_at_0%_63%,#AA10EC_2%,#641188_100%)]" />
+                <svg width="0" height="0" style={{ position: "absolute" }}>
+                  <filter id="noiseFilter">
+                    <feTurbulence
+                      type="fractalNoise"
+                      baseFrequency="0.8"
+                      numOctaves="4"
+                      stitchTiles="stitch"
+                    />
+                    <feColorMatrix type="saturate" values="0" />
+                  </filter>
+                </svg>
+                <Image
+                  src="/cta1.svg"
+                  width={300}
+                  height={200}
+                  className="absolute inset-0 w-full h-full object-cover opacity-80"
+                  alt={"cta"}
+                />
+
+                <div
+                  className="absolute inset-0 opacity-[0.25] pointer-events-none mix-blend-soft-light"
+                  style={{ filter: "url(#noiseFilter)" }}
+                />
+              </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── CONTACT ────────────────────────────────────────────────────────── */}
-      <section
-        id="contact"
-        className="py-16 sm:py-20 px-4 sm:px-8 lg:px-16 bg-muted/10"
-      >
-        <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-10 lg:gap-16">
-          <div className="flex-1 max-w-[560px]">
-            <h2 className="font-bold text-foreground text-3xl sm:text-4xl mb-4">
-              Get in Touch
-            </h2>
-            <p className="text-muted-foreground text-lg leading-relaxed mb-8 sm:mb-10">
-              Have a question about our comparison tool? Want to partner with
-              us? Drop us a message and our team will get back to you within 24
-              hours.
-            </p>
-
-            <div className="flex flex-col gap-6">
-              {[
-                {
-                  icon: <Mail className="w-5 h-5 text-primary" />,
-                  label: "Email Us",
-                  value: "support@compareheathrowparking.uk",
-                },
-                {
-                  icon: <Phone className="w-5 h-5 text-primary" />,
-                  label: "Call Us",
-                  value: "+44 800 123 4567 (Mon-Fri, 9am-5pm)",
-                },
-              ].map(({ icon, label, value }) => (
-                <div key={label} className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-full bg-primary/5 flex items-center justify-center shrink-0">
-                    {icon}
-                  </div>
-                  <div>
-                    <p className="font-semibold text-foreground">{label}</p>
-                    <p className="text-muted-foreground text-sm">{value}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="flex-1 max-w-[576px]">
-            <Card className="shadow-xl rounded-[2rem] sm:rounded-[2.4rem]">
-              <CardContent className="p-6 sm:p-8">
-                <div className="flex flex-col gap-4">
-                  <div>
-                    <Label className="text-xs font-medium mb-1 block">
-                      Full Name
-                    </Label>
-                    <Input
-                      placeholder="John Doe"
-                      className="rounded-full mt-1"
-                    />
-                  </div>
-                  <div>
-                    <Label className="text-xs font-medium mb-1 block">
-                      Email Address
-                    </Label>
-                    <Input
-                      type="email"
-                      placeholder="john@example.com"
-                      className="rounded-full mt-1"
-                    />
-                  </div>
-                  <div>
-                    <Label className="text-xs font-medium mb-1 block">
-                      Message
-                    </Label>
-                    <Textarea
-                      rows={5}
-                      placeholder="How can we help you?"
-                      className="rounded-2xl mt-1 resize-none"
-                    />
-                  </div>
-                  <PrimaryButton className="w-full text-base font-semibold">
-                    Send Message
-                  </PrimaryButton>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* ── CTA BANNER ─────────────────────────────────────────────────────── */}
-      <section className="py-10 sm:py-12 px-4 sm:px-8 lg:px-16">
-        <div className="max-w-6xl mx-auto rounded-[2rem] overflow-hidden relative py-12 sm:py-16 text-center">
-          <div className="absolute inset-0" />
-          <div className="absolute inset-0 overflow-hidden">
-            <Image src={"/cta.svg"} alt="" fill />
-          </div>
-          {/* <div className="absolute -right-32 -top-32 w-64 h-64 rounded-full bg-white/10 blur-[32px]" />
+            {/* <div className="absolute -right-32 -top-32 w-64 h-64 rounded-full bg-white/10 blur-[32px]" />
           <div className="absolute -left-32 -bottom-32 w-64 h-64 rounded-full bg-black/10 blur-[32px]" /> */}
 
-          <div className="relative z-10 px-4">
-            <h2 className="font-bold text-white text-2xl sm:text-[35px] sm:leading-[48px] mb-4">
-              Find the Best Heathrow Parking Deal Today
-            </h2>
-            <p className="text-white/90 text-sm sm:text-base leading-relaxed max-w-[716px] mx-auto mb-8">
-              Stop searching multiple sites. Enter your dates once and let us
-              find the cheapest, most secure parking for your trip.
-            </p>
-            <button className="bg-white text-primary font-semibold text-base sm:text-lg px-8 py-3 sm:py-4 rounded-full shadow-xl hover:bg-white/90 transition-colors">
-              Compare Prices Now
-            </button>
+            <div className="relative z-10 px-4">
+              <h2 className="font-bold text-white text-2xl sm:text-[35px] sm:leading-[48px] mb-4">
+                Find the Best Heathrow Parking Deal Today
+              </h2>
+              <p className="text-white/90 text-sm sm:text-base leading-relaxed max-w-[716px] mx-auto mb-8">
+                Stop searching multiple sites. Enter your dates once and let us
+                find the cheapest, most secure parking for your trip.
+              </p>
+              <button className="bg-white text-primary font-semibold text-base sm:text-lg px-8 py-3 sm:py-4 rounded-full shadow-xl hover:bg-white/90 transition-colors">
+                Compare Prices Now
+              </button>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </div>
     </div>
   );
 }
