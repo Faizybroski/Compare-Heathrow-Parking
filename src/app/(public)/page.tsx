@@ -1232,7 +1232,7 @@ export default function CompareHeathrowParking() {
                 Stop searching multiple sites. Enter your dates once and let us
                 find the cheapest, most secure parking for your trip.
               </p>
-              <button aschild>
+              <button>
                 <Link
                   href="/book"
                   className="bg-white text-primary font-semibold text-sm sm:text-base lg:text-lg px-6 sm:px-8 py-3 sm:py-4 rounded-full shadow-xl hover:bg-white/90 active:scale-95 transition-all"
