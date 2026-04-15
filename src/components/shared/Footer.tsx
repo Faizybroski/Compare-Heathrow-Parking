@@ -162,6 +162,8 @@ export default function Footer() {
 
         {/* Bottom row */}
         <div className="flex flex-col sm:flex-row items-center sm:justify-between text-white text-xs border-t border-white/10 pt-4 gap-2 text-center sm:text-left">
+        <p>Made with ❤️  TSN</p></div>
+        <div className="flex flex-col sm:flex-row items-center sm:justify-between text-white text-xs pt-4 gap-2 text-center sm:text-left">
           <p>© 2026 CompareHeathrowParking.uk. All rights reserved.</p>
           <p>Privacy policy · SSL Secure · Verified Providers</p>
         </div>

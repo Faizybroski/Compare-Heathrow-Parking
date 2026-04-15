@@ -16,6 +16,7 @@
     "date-fns": "^4.1.0",
     "formic": "^0.0.10",
     "formik": "^2.4.9",
+    "framer-motion": "^12.38.0",
     "lucide-react": "^1.7.0",
     "next": "16.2.1",
     "radix-ui": "^1.4.3",

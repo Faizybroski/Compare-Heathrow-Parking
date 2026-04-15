@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import Image from "next/image";
 import {
   BUSINESSES,
@@ -22,6 +23,7 @@ import {
   Mail,
   Phone,
   LayoutGrid,
+  Quote,
   List,
   PiggyBank,
   XCircle,
@@ -40,6 +42,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { DateTimePicker } from "@/components/ui/DatePicker";
+import { NoiseBackground } from "@/components/ui/noise-background";
+import { NoiseTexture } from "@/components/ui/noise-texture";
 
 // // ─── Figma image assets (valid for 7 days) ────────────────────────────────────
 // const imgSarahJenkins =
@@ -109,21 +113,21 @@ const providers = [
     img: "https://parkpro.uk/logo.svg",
     bg: "bg-[#ffeada]",
     name: "ParkPro",
-    desc: "Premium park and ride services with frequent shuttles and top-tier security.",
+    desc: "Reliable park & ride with quick transfers.",
   },
   {
     initials: "HS",
     img: "https://heathrowsafeparking.com/favicon.svg",
     bg: "bg-[#d3eff4]",
     name: "Heathrow Safe Parking",
-    desc: "Award-winning meet and greet service directly at the terminal.",
+    desc: "Meet & greet parking right at the terminal.",
   },
   {
     initials: "PE",
     img: "/parkease_logo.svg",
     bg: "bg-[#155263]",
     name: "ParkEase",
-    desc: "Budget-friendly options without compromising on safety or convenience.",
+    desc: "Affordable parking with solid security.",
   },
 ];
 
@@ -458,12 +462,6 @@ export default function CompareHeathrowParking() {
     );
   };
 
-  const scrollToSearch = () => {
-    document
-      .getElementById("search")
-      ?.scrollIntoView({ behavior: "smooth", block: "center" });
-  };
-
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
       {/* ── HERO ───────────────────────────────────────────────────────────── */}
@@ -474,7 +472,7 @@ export default function CompareHeathrowParking() {
         <div className=" flex items-center overflow-hidden relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-8 lg:px-16 pt-20 pb-12 sm:pt-24 sm:pb-16 flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
           {/* Left */}
           <div className="flex-1 max-w-[540px] text-center lg:text-left">
-            <div className="inline-flex items-center gap-2 bg-primary/10 rounded-full px-3 py-1 mb-6 sm:mb-8">
+            <div className="inline-flex items-center gap-2 bg-white/50 rounded-full px-3 py-1 mb-6 sm:mb-8">
               <Shield className="w-4 h-4 text-primary" />
               <span className="text-sm font-medium text-primary">
                 Trusted by 50,000+ UK Travelers
@@ -486,7 +484,7 @@ export default function CompareHeathrowParking() {
               <br />
               Parking Prices in
               <br />
-              <span className="text-primary">Seconds</span>
+              <span className="text-primarylight">Seconds</span>
             </h1>
 
             <p className="text-muted-foreground text-base sm:text-lg leading-relaxed mb-6 sm:mb-8 max-w-[500px] mx-auto lg:mx-0">
@@ -494,12 +492,26 @@ export default function CompareHeathrowParking() {
               60% on secure, verified airport parking without the hidden fees.
             </p>
 
-            <PrimaryButton
-              onClick={scrollToSearch}
-              className="px-8 text-base font-bold"
-            >
-              Compare Prices Now
-            </PrimaryButton>
+            <Button asChild>
+              <Link
+                href="/book"
+                className="px-8 text-base font-bold relative  overflow-hidden"
+                style={{
+                  background: `
+                    radial-gradient(ellipse 80% 120% at 50% -10%, var(--color-primarylight) 2%, var(--color-primary) 100%)`,
+                }}
+              >
+                <div className="absolute inset-0 z-0 pointer-events-none">
+                  <NoiseTexture
+                    frequency={1}
+                    octaves={10}
+                    slope={0.6}
+                    noiseOpacity={1}
+                  />
+                </div>
+                <span className="relative z-10">Compare Prices Now</span>
+              </Link>
+            </Button>
           </div>
 
           {/* Right – Live Prices card */}
@@ -514,8 +526,8 @@ export default function CompareHeathrowParking() {
                 </div>
 
                 {/* Best deal – ParkEase (dummy) */}
-                <div className="border-2 border-primary/50 rounded-2xl overflow-hidden shadow-sm mb-3 relative">
-                  <div className="bg-purple-grad absolute top-0 right-0 px-3 py-1 rounded-bl-xl rounded-tr-xl text-[10px] font-bold text-white">
+                <div className="border-2 border-primarylight rounded-2xl overflow-hidden shadow-sm mb-3 relative">
+                  <div className="bg-primary absolute top-0 right-0 px-3 py-1 rounded-bl-xl rounded-tr-xl text-[10px] font-bold text-white">
                     BEST DEAL
                   </div>
                   <div className="flex items-center justify-between px-4 py-4">
@@ -576,7 +588,7 @@ export default function CompareHeathrowParking() {
         >
           <Card className="w-full max-w-4xl backdrop-blur-md bg-background/95 border-white/20 shadow-2xl">
             <CardContent className="p-4 sm:p-8">
-              <form onSubmit={handleQuickBook} >
+              <form onSubmit={handleQuickBook}>
                 {/* Date row */}
                 <div className="flex flex-col sm:flex-row items-stretch sm:items-end gap-4 mb-4">
                   <div className="flex-1 w-full">
@@ -584,15 +596,15 @@ export default function CompareHeathrowParking() {
                       Drop-off Date &amp; Time
                     </Label>
                     {/* <div className="relative"> */}
-                      {/* <CalendarDays className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none z-10" /> */}
-                      <DateTimePicker
-                        value={startDate}
-                        onChange={(val) => {
-                          setSearchError("");
-                          setStartDate(val);
-                          if (val && endDate) fetchCalculatedPrices(val, endDate);
-                        }}
-                      />
+                    {/* <CalendarDays className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none z-10" /> */}
+                    <DateTimePicker
+                      value={startDate}
+                      onChange={(val) => {
+                        setSearchError("");
+                        setStartDate(val);
+                        if (val && endDate) fetchCalculatedPrices(val, endDate);
+                      }}
+                    />
                     {/* </div> */}
                   </div>
                   <div className="flex-1 w-full">
@@ -600,24 +612,39 @@ export default function CompareHeathrowParking() {
                       Pick-up Date &amp; Time
                     </Label>
                     {/* <div className="relative"> */}
-                      {/* <CalendarDays className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none z-10" /> */}
-                      <DateTimePicker
-                        value={endDate}
-                        onChange={(val) => {
-                          setSearchError("");
-                          setEndDate(val);
-                          if (startDate && val) fetchCalculatedPrices(startDate, val);
-                        }}
-                      />
+                    {/* <CalendarDays className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none z-10" /> */}
+                    <DateTimePicker
+                      value={endDate}
+                      onChange={(val) => {
+                        setSearchError("");
+                        setEndDate(val);
+                        if (startDate && val)
+                          fetchCalculatedPrices(startDate, val);
+                      }}
+                    />
                     {/* </div> */}
                   </div>
                   <Button
                     // type="button"
                     // onClick={handleSearch}
-                    className="w-full sm:w-auto px-8 py-3.5 text-base font-semibold whitespace-nowrap shrink-0"
+                    className="relative w-full sm:w-auto px-8  text-base font-semibold whitespace-nowrap shrink-0  overflow-hidden"
+                    style={{
+                      background: `
+                    radial-gradient(ellipse 80% 120% at 50% -10%, #AA10EC 2%, var(--color-primary) 100%)`,
+                    }}
                   >
-                    <Search className="w-4 h-4 mr-2" />
-                    Search
+                    <div className="absolute inset-0 z-0 pointer-events-none">
+                      <NoiseTexture
+                        frequency={1}
+                        octaves={10}
+                        slope={0.6}
+                        noiseOpacity={1}
+                      />
+                    </div>
+                    <span className="flex items-center relative z-10">
+                      <Search className="w-4 h-4 mr-2" />
+                      Search
+                    </span>
                   </Button>
                 </div>
 
@@ -629,8 +656,17 @@ export default function CompareHeathrowParking() {
                   </p>
                 )}
 
-                <div className="border-t pt-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                  <div className="flex flex-wrap items-center gap-2">
+                {/* <div className="border-t pt-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3"> */}
+                <div className="border-t pt-4 flex items-center justify-between text-sm">
+                  <p className="text-muted-foreground">
+                    Showing best deals for your selected dates
+                  </p>
+
+                  <span className="text-primary font-medium">
+                    Sorted by price & rating ⭐
+                  </span>
+                </div>
+                {/* <div className="flex flex-wrap items-center gap-2">
                     <span className="text-sm text-muted-foreground font-medium">
                       Filter by:
                     </span>
@@ -660,8 +696,8 @@ export default function CompareHeathrowParking() {
                     >
                       <List className="w-3.5 h-3.5" /> List View
                     </Button>
-                  </div>
-                </div>
+                  </div> */}
+                {/* </div> */}
               </form>
             </CardContent>
           </Card>
@@ -726,33 +762,104 @@ export default function CompareHeathrowParking() {
           </div>
         </div>
       </section>*/}
-      <section className="bg-purple-grad -mx-4 sm:-mx-6 px-4 sm:px-8 lg:px-16 py-8 flex flex-col sm:flex-row items-center justify-around gap-6 sm:gap-4">
-        {[
-          {
-            icon: <PiggyBank className="w-8 h-8 text-white" />,
-            title: "Users saved up to £42",
-            sub: "this week alone",
-          },
-          {
-            icon: <ShieldCheck className="w-8 h-8 text-white" />,
-            title: "Trusted Providers",
-            sub: "Fully vetted & secure",
-          },
-          {
-            icon: <XCircle className="w-8 h-8 text-white" />,
-            title: "No Hidden Fees",
-            sub: "What you see is what you pay",
-          },
-        ].map((stat) => (
-          <div key={stat.title} className="flex items-center gap-4">
-            {stat.icon}
-            <div>
-              <p className="text-white font-bold text-lg">{stat.title}</p>
-              <p className="text-white/80 text-sm">{stat.sub}</p>
+      <section
+        className="relative overflow-hidden shadow-inner"
+        style={{
+          background: `radial-gradient(ellipse 80% 120% at 50% -10%, #AA10EC 2%, var(--color-primary) 100%), linear-gradient(to right, var(--color-primary), #AA10EC)`,
+        }}
+      >
+        {/* Overlay */}
+        <div
+          className="absolute inset-0 opacity-10 z-10"
+          style={{ background: `var(--primary)` }}
+        />
+
+        {/* Noise */}
+        <div className="absolute inset-0 z-20 pointer-events-none">
+          <NoiseTexture
+            frequency={1}
+            octaves={10}
+            slope={0.6}
+            noiseOpacity={1}
+          />
+        </div>
+
+        {/* Content */}
+        <div className="relative z-30 shadow-inner mx-4 sm:-mx-6 px-4 sm:px-8 lg:px-16 py-8 flex flex-col sm:flex-row items-center justify-around gap-6 sm:gap-4">
+          {[
+            {
+              icon: <PiggyBank className="w-8 h-8 text-white" />,
+              title: "Users saved up to £42",
+              sub: "this week alone",
+            },
+            {
+              icon: <ShieldCheck className="w-8 h-8 text-white" />,
+              title: "Trusted Providers",
+              sub: "Fully vetted & secure",
+            },
+            {
+              icon: <XCircle className="w-8 h-8 text-white" />,
+              title: "No Hidden Fees",
+              sub: "What you see is what you pay",
+            },
+          ].map((stat) => (
+            <div key={stat.title} className="flex items-center gap-4">
+              {stat.icon}
+              <div>
+                <p className="text-white font-bold text-lg">{stat.title}</p>
+                <p className="text-white/80 text-sm">{stat.sub}</p>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </section>
+      {/* <section
+        className=""
+        style={{
+          background: `radial-gradient(ellipse 80% 120% at 50% -10%, #AA10EC 2%, var(--color-primary) 100%), linear-gradient(to right, var(--color-primary), #AA10EC) `,
+        }}
+      >
+        <div
+          className="absolute inset-0 opacity-80"
+          style={{
+            background: `var(--primary)`,
+          }}
+        />
+          <NoiseTexture
+            frequency={1}
+            octaves={10}
+            slope={0.6}
+            noiseOpacity={1}
+          />
+        <div className="shadow-inner mx-4 sm:-mx-6 px-4 sm:px-8 lg:px-16 py-8 flex flex-col sm:flex-row items-center justify-around gap-6 sm:gap-4">
+
+          {[
+            {
+              icon: <PiggyBank className="w-8 h-8 text-white" />,
+              title: "Users saved up to £42",
+              sub: "this week alone",
+            },
+            {
+              icon: <ShieldCheck className="w-8 h-8 text-white" />,
+              title: "Trusted Providers",
+              sub: "Fully vetted & secure",
+            },
+            {
+              icon: <XCircle className="w-8 h-8 text-white" />,
+              title: "No Hidden Fees",
+              sub: "What you see is what you pay",
+            },
+          ].map((stat) => (
+            <div key={stat.title} className="flex items-center gap-4">
+              {stat.icon}
+              <div>
+                <p className="text-white font-bold text-lg">{stat.title}</p>
+                <p className="text-white/80 text-sm">{stat.sub}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section> */}
 
       {/* ── OUR MISSION / WHY USE US ───────────────────────────────────────── */}
       <section className="py-16 sm:py-20 px-4 sm:px-8 lg:px-16 max-w-7xl oveflow-hidden mx-auto bg-[url('/circles.svg')] bg-no-repeat bg-position-[center_-10%]">
@@ -876,8 +983,13 @@ export default function CompareHeathrowParking() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {testimonials.map((t) => (
-                <Card key={t.name} className="border">
+                <Card
+                  key={t.name}
+                  className="relative border border-primarylight/20 p-0"
+                >
                   <CardContent className="p-6 sm:p-8">
+                    <Quote className="absolute top-5 right-5 w-6 h-6 text-transparent fill-primary/20" />
+
                     <div className="flex gap-1 mb-4">
                       {[...Array(5)].map((_, i) => (
                         <Star
@@ -969,7 +1081,7 @@ export default function CompareHeathrowParking() {
         </section>
 
         {/* ── CONTACT ────────────────────────────────────────────────────────── */}
-        <section
+        {/* <section
           id="contact"
           className="py-16 sm:py-20 px-4 sm:px-8 lg:px-16 bg-muted/10"
         >
@@ -987,14 +1099,14 @@ export default function CompareHeathrowParking() {
               <div className="flex flex-col gap-6">
                 {[
                   {
-                    icon: <Mail className="w-5 h-5 text-primary" />,
+                    icon: <Mail className="w-5 h-5 text-primarylight" />,
                     label: "Email Us",
-                    value: "support@compareheathrowparking.uk",
+                    value: "info@compareheathrowparking.uk",
                   },
                   {
-                    icon: <Phone className="w-5 h-5 text-primary" />,
+                    icon: <Phone className="w-5 h-5 text-primarylight" />,
                     label: "Call Us",
-                    value: "+44 800 123 4567 (Mon-Fri, 9am-5pm)",
+                    value: "07508624155",
                   },
                 ].map(({ icon, label, value }) => (
                   <div key={label} className="flex items-center gap-4">
@@ -1015,43 +1127,57 @@ export default function CompareHeathrowParking() {
                 <CardContent className="p-6 sm:p-8">
                   <div className="flex flex-col gap-4">
                     <div>
-                      <Label className="text-xs font-medium mb-1 block">
+                      <Label className="text-xs font-medium mb-1 block text-black">
                         Full Name
                       </Label>
                       <Input
                         placeholder="John Doe"
-                        className="rounded-full mt-1"
+                        className="rounded-full mt-1 border-muted-foreground/30 placeholder:text-muted-foreground/40"
                       />
                     </div>
                     <div>
-                      <Label className="text-xs font-medium mb-1 block">
+                      <Label className="text-xs font-medium mb-1 block text-black">
                         Email Address
                       </Label>
                       <Input
                         type="email"
                         placeholder="john@example.com"
-                        className="rounded-full mt-1"
+                        className="rounded-full mt-1 border-muted-foreground/30 placeholder:text-muted-foreground/40"
                       />
                     </div>
                     <div>
-                      <Label className="text-xs font-medium mb-1 block">
+                      <Label className="text-xs font-medium mb-1 block text-black">
                         Message
                       </Label>
                       <Textarea
                         rows={5}
                         placeholder="How can we help you?"
-                        className="rounded-2xl mt-1 resize-none"
+                        className="rounded-2xl mt-1 resize-none border-muted-foreground/30 placeholder:text-muted-foreground/40"
                       />
                     </div>
-                    <PrimaryButton className="w-full text-base font-semibold">
-                      Send Message
-                    </PrimaryButton>
+                    <Button
+                      className="relative w-full text-base font-semibold overflow-hidden"
+                      style={{
+                        background: `radial-gradient(ellipse 80% 120% at 50% -10%, #AA10EC 2%, var(--color-primary) 100%)`,
+                      }}
+                    >
+                      <div className="absolute inset-0 z-0 pointer-events-none">
+                        <NoiseTexture
+                          frequency={1}
+                          octaves={10}
+                          slope={0.6}
+                          noiseOpacity={1}
+                        />
+                      </div>
+
+                      <span className="relative z-10">Send Message</span>
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
             </div>
           </div>
-        </section>
+        </section> */}
 
         {/* ── CTA BANNER ─────────────────────────────────────────────────────── */}
         <section className="py-8 sm:py-12 px-4 sm:px-8 lg:px-16">
@@ -1059,13 +1185,43 @@ export default function CompareHeathrowParking() {
             {/* Background SVG fills the container */}
             <div className="absolute inset-0">
               <Image
-                src="/cta.svg"
+                src="/Background+Shadow.svg"
                 alt=""
                 fill
                 sizes="(max-width: 640px) 100vw, (max-width: 1280px) 90vw, 1152px"
                 className="object-cover"
+                style={{
+                  background: `radial-gradient(ellipse 80% 120% at 50% -10%, #AA10EC 2%, var(--color-primary) 100%), linear-gradient(to right, var(--color-primary), #AA10EC) `,
+                }}
                 priority={false}
               />
+              <div
+                className="absolute inset-0 opacity-80"
+                style={{
+                  background: `var(--primary)`,
+                }}
+              />
+              <NoiseTexture
+                frequency={1}
+                octaves={10}
+                slope={0.6}
+                noiseOpacity={1}
+              />
+
+              {/* <div className="absolute inset-0 pointer-events-none opacity-[0.06] mix-blend-overlay">
+                <svg width="100%" height="100%">
+                  <filter id="noiseFilter">
+                    <feTurbulence
+                      type="fractalNoise"
+                      baseFrequency="0.8"
+                      numOctaves="4"
+                      stitchTiles="stitch"
+                    />
+                  </filter>
+                  <rect width="100%" height="100%" filter="url(#noiseFilter)" />
+                </svg>
+              </div> */}
+              {/* <NoiseTexture frequency={0.4} octaves={1} slope={0.6} noiseOpacity={1} className="bg-primary" /> */}
             </div>
 
             <div className="relative z-10 px-6 sm:px-12 py-10 sm:py-0 w-full">
@@ -1076,12 +1232,13 @@ export default function CompareHeathrowParking() {
                 Stop searching multiple sites. Enter your dates once and let us
                 find the cheapest, most secure parking for your trip.
               </p>
-              <button
-                type="button"
-                onClick={scrollToSearch}
-                className="bg-white text-primary font-semibold text-sm sm:text-base lg:text-lg px-6 sm:px-8 py-3 sm:py-4 rounded-full shadow-xl hover:bg-white/90 active:scale-95 transition-all"
-              >
-                Compare Prices Now
+              <button aschild>
+                <Link
+                  href="/book"
+                  className="bg-white text-primary font-semibold text-sm sm:text-base lg:text-lg px-6 sm:px-8 py-3 sm:py-4 rounded-full shadow-xl hover:bg-white/90 active:scale-95 transition-all"
+                >
+                  Compare Prices Now
+                </Link>
               </button>
             </div>
           </div>
