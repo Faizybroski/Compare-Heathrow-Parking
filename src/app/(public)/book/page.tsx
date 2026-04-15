@@ -29,6 +29,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { NoiseTexture } from "@/components/ui/noise-texture";
 import {
   CalendarClock,
   User,
@@ -383,136 +384,168 @@ function BookingFormContent() {
               {/*  PRICE COMPARISON — all businesses            */}
               {/* ══════════════════════════════════════════════ */}
               {pricePreview && (
-              <Card className="rounded-2xl p-6 lg:p-8 bg-card text-card-foreground border border-primary ring-0">
-                <CardHeader className="p-0">
-                  <CardTitle className="flex items-center gap-2 text-lg font-bold mb-1">
-                    <Star className="h-6 w-6 text-primary" />
-                    Choose Your Provider
-                  </CardTitle>
-                  <CardDescription>
-                    {hasDates
-                      ? "Prices calculated for your selected dates — click a button to proceed to payment."
-                      : "Select your dates above to see live prices for each provider."}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="p-0 mt-5 flex flex-col gap-3">
-                  {BUSINESSES.map((b) => {
-                    const bp = bizPrices[b.id];
-                    const isDummy = b.businessId === null;
-                    const isPending = pendingBiz === b.businessId;
+                <Card className="rounded-2xl p-6 lg:p-8 bg-card text-card-foreground border border-primary ring-0">
+                  <CardHeader className="p-0">
+                    <CardTitle className="flex items-center gap-2 text-lg font-bold mb-1">
+                      <Star className="h-6 w-6 text-primary" />
+                      Choose Your Provider
+                    </CardTitle>
+                    <CardDescription>
+                      {hasDates
+                        ? "Prices calculated for your selected dates — click a button to proceed to payment."
+                        : "Select your dates above to see live prices for each provider."}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="p-0 mt-5 flex flex-col gap-3">
+                    {BUSINESSES.map((b) => {
+                      const bp = bizPrices[b.id];
+                      const isDummy = b.businessId === null;
+                      const isPending = pendingBiz === b.businessId;
 
-                    // build the price label
-                    let priceLabel = "";
-                    let daysLabel = "";
-                    if (isDummy) {
-                      priceLabel = `from £${b.dummyStartingPrice!.toFixed(2)}/day`;
-                    } else if (!hasDates) {
-                      priceLabel = "Select dates to see price";
-                    } else if (bp.loading) {
-                      priceLabel = "Calculating…";
-                    } else if (bp.error) {
-                      priceLabel = "Price unavailable";
-                    } else if (
-                      bp.totalPrice !== null &&
-                      bp.totalDays !== null
-                    ) {
-                      priceLabel = formatPrice(bp.totalPrice);
-                      daysLabel = formatDayCount(bp.totalDays);
-                    }
+                      // build the price label
+                      let priceLabel = "";
+                      let daysLabel = "";
+                      if (isDummy) {
+                        priceLabel = `from £${b.dummyStartingPrice!.toFixed(2)}/day`;
+                      } else if (!hasDates) {
+                        priceLabel = "Select dates to see price";
+                      } else if (bp.loading) {
+                        priceLabel = "Calculating…";
+                      } else if (bp.error) {
+                        priceLabel = "Price unavailable";
+                      } else if (
+                        bp.totalPrice !== null &&
+                        bp.totalDays !== null
+                      ) {
+                        priceLabel = formatPrice(bp.totalPrice);
+                        daysLabel = formatDayCount(bp.totalDays);
+                      }
 
-                    // button text
-                    const btnText = isDummy
-                      ? `${b.name} — Coming Soon`
-                      : bp.loading
-                        ? "Calculating…"
-                        : bp.totalPrice !== null && bp.totalDays !== null
-                          ? `${formatPrice(bp.totalPrice)} for ${formatDayCount(bp.totalDays)}`
-                          : `Book with ${b.name}`;
+                      // button text
+                      const btnText = isDummy
+                        ? `${b.name} — Coming Soon`
+                        : bp.loading
+                          ? "Calculating…"
+                          : bp.totalPrice !== null && bp.totalDays !== null
+                            ? `${formatPrice(bp.totalPrice)} for ${formatDayCount(bp.totalDays)}`
+                            : `Book with ${b.name}`;
 
-                    return (
-                      <div
-                        key={b.id}
-                        className={`flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-xl border p-4 sm:p-5 transition-colors ${
-                          b.highlighted
-                            ? "border-primary/40 bg-primary/[0.02]"
-                            : "border-border bg-background"
-                        }`}
-                      >
-                        {/* Provider info */}
-                        <div className="flex items-start gap-3 min-w-0">
-                          <div
-                            className={`w-10 h-10 rounded-full  flex items-center justify-center shrink-0 ${b.bg}`}
-                          >
-                            {/* <span className="text-xs font-bold text-primary">
+                      return (
+                        <div
+                          key={b.id}
+                          className={`flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-xl border p-4 sm:p-5 transition-colors ${
+                            b.highlighted
+                              ? "border-primary/40 bg-primary/[0.02]"
+                              : "border-border bg-background"
+                          }`}
+                        >
+                          {/* Provider info */}
+                          <div className="flex items-start gap-3 min-w-0">
+                            <div
+                              className={`w-10 h-10 rounded-full  flex items-center justify-center shrink-0 ${b.bg}`}
+                            >
+                              {/* <span className="text-xs font-bold text-primary">
                               {b.name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase()}
                             </span> */}
-                            <Image
-                              src={b.img}
-                              alt={b.name}
-                              width={20}
-                              height={20}
-                            />
-                          </div>
-                          <div className="min-w-0">
-                            <div className="flex items-center gap-2 flex-wrap">
-                              <p className="font-bold text-foreground text-sm">
-                                {b.name}
-                              </p>
-                              {b.tags.map((t) => (
-                                <Badge
-                                  key={t}
-                                  className="text-primary bg-primary/10 border-primary/20 text-[10px] px-2 py-0"
-                                >
-                                  {t}
-                                </Badge>
-                              ))}
+                              <Image
+                                src={b.img}
+                                alt={b.name}
+                                width={20}
+                                height={20}
+                              />
                             </div>
-                            <p className="text-xs text-muted-foreground mt-0.5">
-                              {b.rating} · {b.transfer} transfer · {b.type}
-                            </p>
-                            <p className="text-sm font-semibold text-primary mt-1">
-                              {priceLabel}
-                              {daysLabel && (
-                                <span className="text-muted-foreground font-normal text-xs ml-1">
-                                  ({daysLabel})
-                                </span>
-                              )}
-                            </p>
+                            <div className="min-w-0">
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <p className="font-bold text-foreground text-sm">
+                                  {b.name}
+                                </p>
+                                {b.tags.map((t) => (
+                                  <Badge
+                                    key={t}
+                                    className="text-primary bg-primary/10 border-primary/20 text-[10px] px-2 py-0"
+                                  >
+                                    {t}
+                                  </Badge>
+                                ))}
+                              </div>
+                              <p className="text-xs text-muted-foreground mt-0.5">
+                                {b.rating} · {b.transfer} transfer · {b.type}
+                              </p>
+                              <p className="text-sm font-semibold text-primary mt-1">
+                                {priceLabel}
+                                {daysLabel && (
+                                  <span className="text-muted-foreground font-normal text-xs ml-1">
+                                    ({daysLabel})
+                                  </span>
+                                )}
+                              </p>
+                            </div>
                           </div>
-                        </div>
 
-                        {/* Book button */}
-                        <button
-                          type="button"
-                          disabled={
-                            isDummy || isPending || bp.loading || !hasDates || true
-                          }
-                          // onClick={() =>
-                          //   b.businessId && handleBookWith(b.businessId)
-                          // }
-                          className={`cursor-not-allowed shrink-0 inline-flex items-center justify-center gap-2 rounded-full text-sm font-semibold px-5 py-2.5 transition-opacity whitespace-nowrap
+                          {/* Book button */}
+                          <button
+                            type="button"
+                            disabled={
+                              isDummy ||
+                              isPending ||
+                              bp.loading ||
+                              !hasDates ||
+                              true
+                            }
+                            // onClick={() =>
+                            //   b.businessId && handleBookWith(b.businessId)
+                            // }
+                            className={`relative overflow-hidden cursor-not-allowed shrink-0 inline-flex items-center justify-center gap-2 rounded-full text-sm font-semibold px-5 py-2.5 transition-opacity whitespace-nowrap
                             ${
                               isDummy
                                 ? "bg-muted text-muted-foreground cursor-not-allowed"
                                 : !hasDates
                                   ? "bg-muted text-muted-foreground cursor-not-allowed"
-                                  : "bg-purple-grad text-white hover:opacity-90 cursor-pointer"
+                                  : "text-white hover:opacity-90 cursor-pointer"
                             }`}
-                        >
-                          {isPending ? (
-                            <>
-                              <Loader2 className="h-4 w-4 animate-spin" />
-                              Redirecting…
-                            </>
-                          ) : (
-                            btnText
-                          )}
-                        </button>
-                      </div>
-                    );
-                  })}
-                </CardContent>
-              </Card>
+                            style={
+                              isDummy || !hasDates
+                                ? {
+                                    background: "#e5e7eb", // muted fallback
+                                  }
+                                : {
+                                    background: `
+            radial-gradient(ellipse 80% 120% at 50% -10%, #AA10EC 2%, var(--color-primary) 100%)
+          `,
+                                  }
+                            }
+                          >
+                            {!(isDummy || !hasDates) && (
+                              <div className="absolute inset-0 z-0 pointer-events-none">
+                                <NoiseTexture
+                                  frequency={1}
+                                  octaves={10}
+                                  slope={0.6}
+                                  noiseOpacity={1}
+                                />
+                              </div>
+                            )}
+                            <span className="relative z-10 flex items-center">
+                              {isPending ? (
+                                <>
+                                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                                  Redirecting…
+                                </>
+                              ) : bp.loading ? (
+                                <>
+                                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                                  Calculating…
+                                </>
+                              ) : (
+                                btnText
+                              )}
+                            </span>
+                          </button>
+                        </div>
+                      );
+                    })}
+                  </CardContent>
+                </Card>
               )}
 
               {/* ══════════════════════════════════════════════ */}
@@ -822,15 +855,40 @@ function BookingFormContent() {
                         onClick={() =>
                           b.businessId && handleBookWith(b.businessId)
                         }
-                        className={`w-full inline-flex items-center justify-center gap-2 rounded-xl text-base font-semibold px-6 py-3.5 transition-opacity
+                        className={`relative w-full inline-flex items-center justify-center gap-2 rounded-xl text-base font-semibold px-6 py-3.5 transition-opacity
                           ${
                             isDummy
                               ? "bg-muted text-muted-foreground cursor-not-allowed"
                               : !hasDates || (!!pendingBiz && !isPending)
                                 ? "bg-muted text-muted-foreground cursor-not-allowed"
-                                : "bg-purple-grad text-white hover:opacity-90"
+                                : "bg-primary text-white hover:opacity-90"
                           }`}
+                        style={
+                          isDummy || !hasDates || (!!pendingBiz && !isPending)
+                            ? {
+                                background: "#e5e7eb", // muted fallback
+                              }
+                            : {
+                                background: `
+            radial-gradient(ellipse 80% 120% at 50% -10%, #AA10EC 2%, var(--color-primary) 100%)
+          `,
+                              }
+                        }
                       >
+                        {!(
+                          isDummy ||
+                          !hasDates ||
+                          (!!pendingBiz && !isPending)
+                        ) && (
+                          <div className="absolute inset-0 z-0 pointer-events-none">
+                            <NoiseTexture
+                              frequency={1}
+                              octaves={10}
+                              slope={0.6}
+                              noiseOpacity={1}
+                            />
+                          </div>
+                        )}
                         {isPending ? (
                           <>
                             <Loader2 className="h-5 w-5 animate-spin" />

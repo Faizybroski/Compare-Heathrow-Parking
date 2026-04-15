@@ -42,7 +42,6 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { DateTimePicker } from "@/components/ui/DatePicker";
-import { NoiseBackground } from "@/components/ui/noise-background";
 import { NoiseTexture } from "@/components/ui/noise-texture";
 
 // // ─── Figma image assets (valid for 7 days) ────────────────────────────────────

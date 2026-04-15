@@ -20,6 +20,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { NoiseTexture } from "@/components/ui/noise-texture";
 
 function TrackContent() {
   const searchParams = useSearchParams();
@@ -114,8 +115,16 @@ function TrackContent() {
             <button
               type="submit"
               disabled={loading}
-              className="rounded-full px-8 py-3.5 font-bold text-white transition-all hover:opacity-90 disabled:opacity-50 bg-primary"
+              className="relative overflow-hidden rounded-full px-8 py-3.5 font-bold text-white transition-all hover:opacity-90 disabled:opacity-50 bg-primary"
             >
+              <div className="absolute inset-0 z-0 pointer-events-none">
+              <NoiseTexture
+                frequency={1}
+                octaves={10}
+                slope={0.6}
+                noiseOpacity={1}
+              />
+            </div>
               {loading ? "..." : "Track"}
             </button>
           </div>

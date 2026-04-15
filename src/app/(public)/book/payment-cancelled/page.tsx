@@ -7,6 +7,7 @@ import { Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { XCircle, Loader2 } from "lucide-react";
 import { getBrandByBusinessId } from "@/lib/businesses";
+import { NoiseTexture } from "@/components/ui/noise-texture";
 
 function PaymentCancelledContent() {
   const searchParams = useSearchParams();
@@ -52,8 +53,16 @@ function PaymentCancelledContent() {
         )}
 
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          <Button asChild>
-            <Link href={bookAgainHref}>Try Again</Link>
+          <Button asChild className="relative overflow-hidden">
+            <Link href={bookAgainHref}>
+            <div className="absolute inset-0 z-0 pointer-events-none">
+                          <NoiseTexture
+                            frequency={1}
+                            octaves={10}
+                            slope={0.6}
+                            noiseOpacity={1}
+                          />
+                        </div>Try Again</Link>
           </Button>
           <Button asChild variant="outline">
             <Link href="/">Back to Home</Link>

@@ -12,6 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { NoiseTexture } from "@/components/ui/noise-texture";
 import { CheckCircle2, Loader2, AlertCircle } from "lucide-react";
 
 function PaymentSuccessContent() {
@@ -45,7 +46,9 @@ function PaymentSuccessContent() {
         if (message.includes("402") && attempts < maxAttempts) {
           setTimeout(poll, delay);
         } else {
-          setError("Could not load booking details. Your payment was received — check your email for confirmation or track your booking.");
+          setError(
+            "Could not load booking details. Your payment was received — check your email for confirmation or track your booking.",
+          );
           setLoading(false);
         }
       }
@@ -58,7 +61,9 @@ function PaymentSuccessContent() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gap-4">
         <Loader2 className="h-10 w-10 animate-spin text-primary" />
-        <p className="text-muted-foreground text-sm">Confirming your payment…</p>
+        <p className="text-muted-foreground text-sm">
+          Confirming your payment…
+        </p>
       </div>
     );
   }
@@ -70,9 +75,12 @@ function PaymentSuccessContent() {
           <div className="w-16 h-16 rounded-2xl bg-amber-100 flex items-center justify-center mx-auto">
             <AlertCircle className="w-8 h-8 text-amber-500" />
           </div>
-          <h1 className="text-2xl font-bold text-foreground">Payment Received</h1>
+          <h1 className="text-2xl font-bold text-foreground">
+            Payment Received
+          </h1>
           <p className="text-muted-foreground text-sm">
-            {error ?? "Your payment was successful. Check your email for confirmation."}
+            {error ??
+              "Your payment was successful. Check your email for confirmation."}
           </p>
           <Button asChild>
             <Link href="/track">Track Your Booking</Link>
@@ -93,7 +101,9 @@ function PaymentSuccessContent() {
         {/* Success header */}
         <div className="text-center space-y-2 animate-in fade-in slide-in-from-bottom-4">
           <CheckCircle2 className="text-green-500 w-10 h-10 mx-auto" />
-          <h1 className="text-3xl font-bold text-foreground">Payment Confirmed!</h1>
+          <h1 className="text-3xl font-bold text-foreground">
+            Payment Confirmed!
+          </h1>
           <p className="text-muted-foreground text-sm">
             A confirmation email has been sent to {booking.userEmail}
           </p>
@@ -102,14 +112,18 @@ function PaymentSuccessContent() {
         {/* Service provider banner */}
         {brand && (
           <div className="flex items-center gap-3 rounded-xl border border-purple-200 bg-purple-50 px-4 py-3">
-            <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${brand.bg}`}>
+            <div
+              className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${brand.bg}`}
+            >
               <Image src={brand.img} alt={brand.name} width={18} height={18} />
             </div>
             <div>
               <p className="text-sm font-semibold text-purple-900">
                 Service provided by {brand.name}
               </p>
-              <p className="text-xs text-purple-600">Booked via Heathrow Compare Parking</p>
+              <p className="text-xs text-purple-600">
+                Booked via Heathrow Compare Parking
+              </p>
             </div>
           </div>
         )}
@@ -173,8 +187,16 @@ function PaymentSuccessContent() {
 
         {/* Actions */}
         <div className="flex flex-col sm:flex-row gap-2">
-          <Button asChild className="flex-1">
+          <Button asChild className="flex-1 relative overflow-hidden">
             <Link href={`/track?number=${booking.trackingNumber}`}>
+            <div className="absolute inset-0 z-0 pointer-events-none">
+              <NoiseTexture
+                frequency={1}
+                octaves={10}
+                slope={0.6}
+                noiseOpacity={1}
+              />
+            </div>
               Track Booking
             </Link>
           </Button>
