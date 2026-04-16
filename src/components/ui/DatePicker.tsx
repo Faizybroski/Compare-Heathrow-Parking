@@ -255,7 +255,7 @@ export function DateTimePicker({ value, onChange, homepage = false }: Props) {
       </PopoverTrigger>
 
       {/* COMBINED PANEL */}
-      <PopoverContent align="start" className="p-0 rounded-xl shadow-lg w-auto bg-white/20 backdrop-blur-sm">
+      <PopoverContent align="start" className="p-0 rounded-xl shadow-lg w-auto">
         <div className="flex">
           {/* Calendar */}
           <div className="border-r p-2">

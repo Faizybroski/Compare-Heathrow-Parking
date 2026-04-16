@@ -18,16 +18,10 @@ import {
   ShieldCheck,
   Zap,
   Check,
-  Bookmark,
   ChevronDown,
-  Mail,
-  Phone,
-  LayoutGrid,
   Quote,
-  List,
   PiggyBank,
   XCircle,
-  CalendarDays,
   BadgeCheck,
   Target,
   ShieldAlert,
@@ -42,15 +36,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { DateTimePicker } from "@/components/ui/DatePicker";
+import AirportPopover from "@/components/ui/AirportPicker"
 import { NoiseTexture } from "@/components/ui/noise-texture";
-
-// // ─── Figma image assets (valid for 7 days) ────────────────────────────────────
-// const imgSarahJenkins =
-//   "https://www.figma.com/api/mcp/asset/9b8b8edb-9810-4ba1-a890-cf8f2d68f9f3";
-// const imgDavidChen =
-//   "https://www.figma.com/api/mcp/asset/ff12d629-64b6-43a8-80c5-8fbccba38709";
-// const imgEmmaThompson =
-//   "https://www.figma.com/api/mcp/asset/002688f5-16f8-4700-b4f1-abf7763067e5";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 type BusinessPrice = {
@@ -121,13 +108,13 @@ const providers = [
     name: "Heathrow Safe Parking",
     desc: "Meet & greet parking right at the terminal.",
   },
-  {
-    initials: "PE",
-    img: "/parkease_logo.svg",
-    bg: "bg-[#155263]",
-    name: "ParkEase",
-    desc: "Affordable parking with solid security.",
-  },
+  // {
+  //   initials: "PE",
+  //   img: "/parkease_logo.svg",
+  //   bg: "bg-[#155263]",
+  //   name: "ParkEase",
+  //   desc: "Affordable parking with solid security.",
+  // },
 ];
 
 const testimonials = [
@@ -179,159 +166,6 @@ function PrimaryButton({
     >
       {children}
     </button>
-  );
-}
-
-function ParkingCard({
-  business,
-  price,
-  datesSelected,
-}: {
-  business: BusinessConfig;
-  price: BusinessPrice;
-  datesSelected: boolean;
-}) {
-  const p = business;
-
-  const priceDisplay = (() => {
-    if (p.businessId === null) {
-      // Dummy business
-      return {
-        main: `£${p.dummyStartingPrice!.toFixed(2)}`,
-        sub: "/day",
-        label: "from",
-      };
-    }
-    if (price.loading) return { main: "...", sub: "/day", label: "from" };
-    if (
-      datesSelected &&
-      price.totalPrice !== null &&
-      price.totalDays !== null
-    ) {
-      const perDay = price.totalPrice / price.totalDays;
-      return {
-        main: `£${price.totalPrice.toFixed(2)}`,
-        sub: `£${perDay.toFixed(2)}/day`,
-        label: `${price.totalDays} day${price.totalDays !== 1 ? "s" : ""} total`,
-      };
-    }
-    if (price.startingPrice !== null) {
-      return {
-        main: `£${price.startingPrice.toFixed(2)}`,
-        sub: "/day",
-        label: "from",
-      };
-    }
-    return { main: "—", sub: "/day", label: "from" };
-  })();
-
-  const handleBook = () => {
-    if (!p.bookingUrl) return;
-    window.open(p.bookingUrl, "_blank", "noopener,noreferrer");
-  };
-
-  return (
-    <Card
-      className={`overflow-hidden ${
-        p.highlighted ? "border-primary/40 shadow-md bg-primary/[0.02]" : ""
-      }`}
-    >
-      <CardContent className="p-0 flex flex-col sm:flex-row">
-        {/* Main content */}
-        <div className="flex-1 p-4 sm:p-6">
-          {/* Top row */}
-          <div className="flex flex-wrap items-start justify-between mb-3 gap-2">
-            <div>
-              <h3 className="font-bold text-xl text-foreground">{p.name}</h3>
-              <div className="flex items-center gap-4 mt-1 flex-wrap">
-                <div className="flex items-center gap-1">
-                  <Star className="w-4 h-4 text-primary" fill="currentColor" />
-                  <span className="text-sm text-muted-foreground">
-                    {p.rating}
-                  </span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <MapPin className="w-4 h-4 text-muted-foreground" />
-                  <span className="text-sm text-muted-foreground">
-                    {p.distance}
-                  </span>
-                </div>
-              </div>
-            </div>
-            <div className="flex gap-2 flex-wrap">
-              {p.tags.map((t) => (
-                <Badge
-                  key={t}
-                  className="text-primary bg-primary/10 border-primary/20 hover:bg-primary/15"
-                >
-                  {t}
-                </Badge>
-              ))}
-            </div>
-          </div>
-
-          {/* Details row */}
-          <div className="border-t border-b py-3 sm:py-4 grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-            {[
-              {
-                label: "Transfer",
-                value: p.transfer,
-                icon: <Bus className="w-4 h-4 text-muted-foreground" />,
-              },
-              {
-                label: "Type",
-                value: p.type,
-                icon: <Car className="w-4 h-4 text-muted-foreground" />,
-              },
-              {
-                label: "Cancellation",
-                value: p.cancellation,
-                valueClass: "text-emerald-600",
-              },
-              { label: "Security", value: p.security },
-            ].map(({ label, value, icon, valueClass }) => (
-              <div key={label}>
-                <p className="text-xs text-muted-foreground mb-1">{label}</p>
-                <div className="flex items-center gap-1">
-                  {icon}
-                  <span
-                    className={`text-sm font-medium ${valueClass ?? "text-foreground"}`}
-                  >
-                    {value}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Price + CTA */}
-        <div className="w-full sm:w-52 bg-muted/30 border-t sm:border-t-0 sm:border-l flex flex-col items-center sm:items-end justify-center p-4 sm:p-6 gap-1">
-          <p className="text-sm text-muted-foreground capitalize">
-            {priceDisplay.label}
-          </p>
-          <p className="text-3xl font-extrabold text-foreground">
-            {priceDisplay.main}
-          </p>
-          <p className="text-sm font-medium text-primary">{priceDisplay.sub}</p>
-          {p.bookingUrl ? (
-            <PrimaryButton
-              onClick={handleBook}
-              className="mt-3 w-full text-sm font-bold"
-            >
-              Book Now
-            </PrimaryButton>
-          ) : (
-            <button
-              disabled
-              className="mt-3 w-full text-sm font-bold inline-flex items-center justify-center rounded-full text-muted-foreground bg-muted px-4 py-3 cursor-not-allowed"
-            >
-              Coming Soon
-            </button>
-          )}
-        </div>
-      </CardContent>
-    </Card>
   );
 }
 
@@ -428,39 +262,6 @@ export default function CompareHeathrowParking() {
     [],
   );
 
-  const handleDropOffChange = (val: string) => {
-    setDropOff(val);
-    if (val && pickUp) fetchCalculatedPrices(val, pickUp);
-  };
-
-  const handlePickUpChange = (val: string) => {
-    setPickUp(val);
-    if (dropOff && val) fetchCalculatedPrices(dropOff, val);
-  };
-
-  const datesSelected = Boolean(dropOff && pickUp);
-
-  const handleSearch = () => {
-    setSearchError("");
-    if (!startDate || !endDate) {
-      setSearchError("Please select both a drop-off and pick-up date & time.");
-      return;
-    }
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-    if (start <= new Date()) {
-      setSearchError("Drop-off must be in the future.");
-      return;
-    }
-    if (end <= start) {
-      setSearchError("Pick-up must be after drop-off.");
-      return;
-    }
-    router.push(
-      `/book?start=${encodeURIComponent(start.toISOString())}&end=${encodeURIComponent(end.toISOString())}`,
-    );
-  };
-
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
       {/* ── HERO ───────────────────────────────────────────────────────────── */}
@@ -521,11 +322,11 @@ export default function CompareHeathrowParking() {
                   <h3 className="font-semibold text-foreground text-lg">
                     Live Prices
                   </h3>
-                  <Badge variant="secondary">8 days parking</Badge>
+                  {/* <Badge variant="secondary">8 days parking</Badge> */}
                 </div>
 
                 {/* Best deal – ParkEase (dummy) */}
-                <div className="border-2 border-primarylight rounded-2xl overflow-hidden shadow-sm mb-3 relative">
+                {/* <div className="border-2 border-primarylight rounded-2xl overflow-hidden shadow-sm mb-3 relative">
                   <div className="bg-primary absolute top-0 right-0 px-3 py-1 rounded-bl-xl rounded-tr-xl text-[10px] font-bold text-white">
                     BEST DEAL
                   </div>
@@ -541,7 +342,7 @@ export default function CompareHeathrowParking() {
                       <p className="text-xs text-muted-foreground">from /day</p>
                     </div>
                   </div>
-                </div>
+                </div> */}
 
                 {/* Other providers – live prices */}
                 {BUSINESSES.filter((b) => b.businessId !== null).map((b) => {
@@ -566,11 +367,13 @@ export default function CompareHeathrowParking() {
                       </div>
                       <div className="text-right">
                         <p className="font-bold text-foreground">
-                          {displayPrice}
+                          <span className="text-xs font-normal text-muted-foreground">
+                          starting from
+                        </span>  {displayPrice}
                         </p>
-                        <p className="text-xs text-muted-foreground">
+                        {/* <span className="text-xs text-muted-foreground">
                           from /day
-                        </p>
+                        </span> */}
                       </div>
                     </div>
                   );
@@ -589,13 +392,18 @@ export default function CompareHeathrowParking() {
             <CardContent className="p-4 sm:p-8">
               <form onSubmit={handleQuickBook}>
                 {/* Date row */}
+                <div className="flex-1 w-full mb-4">
+                    <Label className="text-sm font-medium text-foreground mb-2 block">
+                      Select Airport
+                    </Label>
+                    <AirportPopover/>
+                  </div>
+                
                 <div className="flex flex-col sm:flex-row items-stretch sm:items-end gap-4 mb-4">
                   <div className="flex-1 w-full">
                     <Label className="text-sm font-medium text-foreground mb-2 block">
                       Drop-off Date &amp; Time
                     </Label>
-                    {/* <div className="relative"> */}
-                    {/* <CalendarDays className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none z-10" /> */}
                     <DateTimePicker
                       value={startDate}
                       onChange={(val) => {
@@ -604,14 +412,11 @@ export default function CompareHeathrowParking() {
                         if (val && endDate) fetchCalculatedPrices(val, endDate);
                       }}
                     />
-                    {/* </div> */}
                   </div>
                   <div className="flex-1 w-full">
                     <Label className="text-sm font-medium text-foreground mb-2 block">
                       Pick-up Date &amp; Time
                     </Label>
-                    {/* <div className="relative"> */}
-                    {/* <CalendarDays className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none z-10" /> */}
                     <DateTimePicker
                       value={endDate}
                       onChange={(val) => {
@@ -621,11 +426,8 @@ export default function CompareHeathrowParking() {
                           fetchCalculatedPrices(startDate, val);
                       }}
                     />
-                    {/* </div> */}
                   </div>
                   <Button
-                    // type="button"
-                    // onClick={handleSearch}
                     className="relative w-full sm:w-auto px-8  text-base font-semibold whitespace-nowrap shrink-0  overflow-hidden"
                     style={{
                       background: `
@@ -655,7 +457,6 @@ export default function CompareHeathrowParking() {
                   </p>
                 )}
 
-                {/* <div className="border-t pt-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3"> */}
                 <div className="border-t pt-4 flex items-center justify-between text-sm">
                   <p className="text-muted-foreground">
                     Showing best deals for your selected dates
@@ -665,38 +466,7 @@ export default function CompareHeathrowParking() {
                     Sorted by price & rating ⭐
                   </span>
                 </div>
-                {/* <div className="flex flex-wrap items-center gap-2">
-                    <span className="text-sm text-muted-foreground font-medium">
-                      Filter by:
-                    </span>
-                    {["Meet & Greet", "Park & Ride", "On-Airport"].map((f) => (
-                      <Button
-                        key={f}
-                        variant="ghost"
-                        size="sm"
-                        className="rounded-full text-primary bg-primary/5 hover:bg-primary/10 text-xs"
-                      >
-                        {f}
-                      </Button>
-                    ))}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="rounded-full text-primary bg-primary/5 text-xs gap-1.5"
-                    >
-                      <LayoutGrid className="w-3.5 h-3.5" /> Card View
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="rounded-lg text-muted-foreground text-xs gap-1.5"
-                    >
-                      <List className="w-3.5 h-3.5" /> List View
-                    </Button>
-                  </div> */}
-                {/* </div> */}
+                
               </form>
             </CardContent>
           </Card>
@@ -812,53 +582,7 @@ export default function CompareHeathrowParking() {
           ))}
         </div>
       </section>
-      {/* <section
-        className=""
-        style={{
-          background: `radial-gradient(ellipse 80% 120% at 50% -10%, #AA10EC 2%, var(--color-primary) 100%), linear-gradient(to right, var(--color-primary), #AA10EC) `,
-        }}
-      >
-        <div
-          className="absolute inset-0 opacity-80"
-          style={{
-            background: `var(--primary)`,
-          }}
-        />
-          <NoiseTexture
-            frequency={1}
-            octaves={10}
-            slope={0.6}
-            noiseOpacity={1}
-          />
-        <div className="shadow-inner mx-4 sm:-mx-6 px-4 sm:px-8 lg:px-16 py-8 flex flex-col sm:flex-row items-center justify-around gap-6 sm:gap-4">
-
-          {[
-            {
-              icon: <PiggyBank className="w-8 h-8 text-white" />,
-              title: "Users saved up to £42",
-              sub: "this week alone",
-            },
-            {
-              icon: <ShieldCheck className="w-8 h-8 text-white" />,
-              title: "Trusted Providers",
-              sub: "Fully vetted & secure",
-            },
-            {
-              icon: <XCircle className="w-8 h-8 text-white" />,
-              title: "No Hidden Fees",
-              sub: "What you see is what you pay",
-            },
-          ].map((stat) => (
-            <div key={stat.title} className="flex items-center gap-4">
-              {stat.icon}
-              <div>
-                <p className="text-white font-bold text-lg">{stat.title}</p>
-                <p className="text-white/80 text-sm">{stat.sub}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section> */}
+      
 
       {/* ── OUR MISSION / WHY USE US ───────────────────────────────────────── */}
       <section className="py-16 sm:py-20 px-4 sm:px-8 lg:px-16 max-w-7xl oveflow-hidden mx-auto bg-[url('/circles.svg')] bg-no-repeat bg-position-[center_-10%]">
@@ -940,7 +664,9 @@ export default function CompareHeathrowParking() {
             </Button>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-6">
+          {/* <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"> */}
             {providers.map((p) => (
               <Card key={p.name} className="border">
                 <CardContent className="p-6 sm:p-8 text-center">
@@ -1207,20 +933,7 @@ export default function CompareHeathrowParking() {
                 noiseOpacity={1}
               />
 
-              {/* <div className="absolute inset-0 pointer-events-none opacity-[0.06] mix-blend-overlay">
-                <svg width="100%" height="100%">
-                  <filter id="noiseFilter">
-                    <feTurbulence
-                      type="fractalNoise"
-                      baseFrequency="0.8"
-                      numOctaves="4"
-                      stitchTiles="stitch"
-                    />
-                  </filter>
-                  <rect width="100%" height="100%" filter="url(#noiseFilter)" />
-                </svg>
-              </div> */}
-              {/* <NoiseTexture frequency={0.4} octaves={1} slope={0.6} noiseOpacity={1} className="bg-primary" /> */}
+             
             </div>
 
             <div className="relative z-10 px-6 sm:px-12 py-10 sm:py-0 w-full">

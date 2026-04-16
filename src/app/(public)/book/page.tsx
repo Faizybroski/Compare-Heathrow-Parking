@@ -383,7 +383,7 @@ function BookingFormContent() {
               {/* ══════════════════════════════════════════════ */}
               {/*  PRICE COMPARISON — all businesses            */}
               {/* ══════════════════════════════════════════════ */}
-              {pricePreview && (
+              {/* {pricePreview && (
                 <Card className="rounded-2xl p-6 lg:p-8 bg-card text-card-foreground border border-primary ring-0">
                   <CardHeader className="p-0">
                     <CardTitle className="flex items-center gap-2 text-lg font-bold mb-1">
@@ -439,14 +439,11 @@ function BookingFormContent() {
                               : "border-border bg-background"
                           }`}
                         >
-                          {/* Provider info */}
                           <div className="flex items-start gap-3 min-w-0">
                             <div
                               className={`w-10 h-10 rounded-full  flex items-center justify-center shrink-0 ${b.bg}`}
                             >
-                              {/* <span className="text-xs font-bold text-primary">
-                              {b.name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase()}
-                            </span> */}
+                              
                               <Image
                                 src={b.img}
                                 alt={b.name}
@@ -482,7 +479,6 @@ function BookingFormContent() {
                             </div>
                           </div>
 
-                          {/* Book button */}
                           <button
                             type="button"
                             disabled={
@@ -492,9 +488,6 @@ function BookingFormContent() {
                               !hasDates ||
                               true
                             }
-                            // onClick={() =>
-                            //   b.businessId && handleBookWith(b.businessId)
-                            // }
                             className={`relative overflow-hidden cursor-not-allowed shrink-0 inline-flex items-center justify-center gap-2 rounded-full text-sm font-semibold px-5 py-2.5 transition-opacity whitespace-nowrap
                             ${
                               isDummy
@@ -546,7 +539,100 @@ function BookingFormContent() {
                     })}
                   </CardContent>
                 </Card>
-              )}
+              )} */}
+              <Card className="rounded-2xl p-6 lg:p-8 bg-card text-card-foreground border border-primary ring-0">
+                <CardHeader className="p-0">
+                  <CardTitle className="flex items-center gap-2 text-lg font-bold mb-1">
+                    Select Provider &amp; Pay
+                  </CardTitle>
+                  <CardDescription>
+                    {hasDates
+                      ? "Review the prices above and click to proceed to secure checkout."
+                      : "Enter your parking dates to enable booking."}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="p-0 mt-5 flex flex-col gap-3">
+                  {BUSINESSES.map((b) => {
+                    const bp = bizPrices[b.id];
+                    const isDummy = b.businessId === null;
+                    const isPending = pendingBiz === b.businessId;
+                    const hasPrice =
+                      !isDummy &&
+                      bp.totalPrice !== null &&
+                      bp.totalDays !== null;
+
+                    return (
+                      <button
+                        key={b.id}
+                        type="button"
+                        disabled={
+                          isDummy ||
+                          isPending ||
+                          bp.loading ||
+                          !hasDates ||
+                          !!pendingBiz
+                        }
+                        onClick={() =>
+                          b.businessId && handleBookWith(b.businessId)
+                        }
+                        className={`relative w-full inline-flex items-center justify-center gap-2 rounded-xl text-base font-semibold px-6 py-3.5 transition-opacity overflow-hidden
+                          ${
+                            isDummy
+                              ? "bg-muted text-muted-foreground cursor-not-allowed"
+                              : !hasDates || (!!pendingBiz && !isPending)
+                                ? "bg-muted text-muted-foreground cursor-not-allowed"
+                                : "bg-primary text-white hover:opacity-90"
+                          }`}
+                        style={
+                          isDummy || !hasDates || (!!pendingBiz && !isPending)
+                            ? {
+                                background: "#e5e7eb", // muted fallback
+                              }
+                            : {
+                                background: `
+            radial-gradient(ellipse 80% 120% at 50% -10%, #AA10EC 2%, var(--color-primary) 100%)
+          `,
+                              }
+                        }
+                      >
+                        {!(
+                          isDummy ||
+                          !hasDates ||
+                          (!!pendingBiz && !isPending)
+                        ) && (
+                          <div className="absolute inset-0 z-0 pointer-events-none">
+                            <NoiseTexture
+                              frequency={1}
+                              octaves={10}
+                              slope={0.6}
+                              noiseOpacity={1}
+                            />
+                          </div>
+                        )}
+                        {isPending ? (
+                          <>
+                            <Loader2 className="h-5 w-5 animate-spin" />
+                            Redirecting to {b.name}…
+                          </>
+                        ) : isDummy ? (
+                          `${b.name} — Coming Soon`
+                        ) : !hasDates ? (
+                          `Book with ${b.name} — Select dates first`
+                        ) : bp.loading ? (
+                          <>
+                            <Loader2 className="h-5 w-5 animate-spin" />
+                            {`Book with ${b.name} — Calculating price…`}
+                          </>
+                        ) : hasPrice ? (
+                          `Book with ${b.name} · ${formatPrice(bp.totalPrice!)} for ${formatDayCount(bp.totalDays!)}`
+                        ) : (
+                          `Book with ${b.name}`
+                        )}
+                      </button>
+                    );
+                  })}
+                </CardContent>
+              </Card>
 
               {/* ══════════════════════════════════════════════ */}
               {/*  PERSONAL DETAILS SECTION                     */}
@@ -820,7 +906,7 @@ function BookingFormContent() {
               {/* ══════════════════════════════════════════════ */}
               {/*  PAYMENT BUTTONS — one per real business      */}
               {/* ══════════════════════════════════════════════ */}
-              <Card className="rounded-2xl p-6 lg:p-8 bg-card text-card-foreground border border-primary ring-0">
+              {/* <Card className="rounded-2xl p-6 lg:p-8 bg-card text-card-foreground border border-primary ring-0">
                 <CardHeader className="p-0">
                   <CardTitle className="flex items-center gap-2 text-lg font-bold mb-1">
                     Select Provider &amp; Pay
@@ -855,7 +941,7 @@ function BookingFormContent() {
                         onClick={() =>
                           b.businessId && handleBookWith(b.businessId)
                         }
-                        className={`relative w-full inline-flex items-center justify-center gap-2 rounded-xl text-base font-semibold px-6 py-3.5 transition-opacity
+                        className={`relative w-full inline-flex items-center justify-center gap-2 rounded-xl text-base font-semibold px-6 py-3.5 transition-opacity overflow-hidden
                           ${
                             isDummy
                               ? "bg-muted text-muted-foreground cursor-not-allowed"
@@ -912,7 +998,7 @@ function BookingFormContent() {
                     );
                   })}
                 </CardContent>
-              </Card>
+              </Card> */}
             </form>
           </Form>
         </div>
