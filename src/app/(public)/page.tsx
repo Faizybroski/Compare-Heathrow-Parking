@@ -217,9 +217,9 @@ export default function CompareHeathrowParking() {
   const handleQuickBook = (e: React.SyntheticEvent) => {
     e.preventDefault();
     if (startDate && endDate) {
-      router.push(`/book?start=${startDate}&end=${endDate}`);
+      router.push(`/compare?start=${startDate}&end=${endDate}`);
     } else {
-      router.push("/book");
+      router.push("/compare");
     }
   };
 
@@ -353,7 +353,8 @@ export default function CompareHeathrowParking() {
                       ? `£${p.startingPrice.toFixed(2)}`
                       : "—";
                   return (
-                    <div
+                    <Link
+                    href="/compare"
                       key={b.id}
                       className="flex items-center justify-between border rounded-2xl px-4 py-3 mb-2 bg-background shadow-sm"
                     >
@@ -375,7 +376,7 @@ export default function CompareHeathrowParking() {
                           from /day
                         </span> */}
                       </div>
-                    </div>
+                    </Link>
                   );
                 })}
               </CardContent>

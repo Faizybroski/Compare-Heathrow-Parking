@@ -58,7 +58,7 @@ export default function Navbar() {
           ))}
           <button>
             <Link
-              href="/book"
+              href="/compare"
               className="bg-white text-primary text-sm font-bold px-6 py-2 rounded-full shadow-[0_0_20px_rgba(122,63,255,0.3)] hover:bg-white/90 transition-colors"
             >
               Compare Now

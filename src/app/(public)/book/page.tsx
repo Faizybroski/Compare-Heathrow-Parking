@@ -3,6 +3,7 @@
 import { Suspense, useEffect, useState } from "react";
 import { PriceCalculation } from "@/types";
 import { useSearchParams } from "next/navigation";
+import Link from "next/link";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -44,7 +45,8 @@ import {
   AlertCircle,
   Tag,
   Ban,
-  Star,
+  CheckCircle2,
+  ArrowLeft
 } from "lucide-react";
 
 // ─── regex patterns ───────────────────────────────────────────────
@@ -158,6 +160,12 @@ function BookingFormContent() {
   const searchParams = useSearchParams();
   const [pricePreview, setPricePreview] = useState<boolean | null>(null);
 
+  // pre-selected business from /compare
+  const selectedBusinessId = searchParams.get("business");
+  const visibleBusinesses = selectedBusinessId
+    ? BUSINESSES.filter((b) => b.businessId === selectedBusinessId)
+    : BUSINESSES;
+
   // booking-enabled guard (still uses default business for the toggle check)
   const [bookingEnabled, setBookingEnabled] = useState<boolean | null>(null);
   useEffect(() => {
@@ -203,6 +211,19 @@ function BookingFormContent() {
 
   const startTime = form.watch("bookedStartTime");
   const endTime = form.watch("bookedEndTime");
+
+
+  const selectedBiz = visibleBusinesses?.[0];
+
+const localDays =
+  selectedBiz && bizPrices[selectedBiz.id]?.totalDays !== null
+    ? bizPrices[selectedBiz.id]?.totalDays
+    : null;
+
+const localPrice =
+  selectedBiz && bizPrices[selectedBiz.id]?.totalPrice !== null
+    ? bizPrices[selectedBiz.id]?.totalPrice
+    : null;
 
   // fetch prices for all real businesses when dates change
   useEffect(() => {
@@ -324,6 +345,37 @@ function BookingFormContent() {
                   <span>{checkoutError}</span>
                 </div>
               )}
+
+              {/* {selectedBusinessId && visibleBusinesses && ( */}
+                <Card className="rounded-2xl p-5 bg-primary/5 text-card-foreground border border-primary ring-0">
+                  <CardContent className="p-0 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <CheckCircle2 className="h-5 w-5 text-primary shrink-0" />
+                        <p className="font-bold text-foreground">
+                          {visibleBusinesses[0].name}
+                        </p>
+                      </div>
+                      {localDays !== null && localPrice !== null && (
+                        <p className="text-sm text-muted-foreground pl-7">
+                          {formatDayCount(localDays)} ·{" "}
+                          <span className="font-semibold text-primary">
+                            {formatPrice(localPrice)}
+                          </span>{" "}
+                          total
+                        </p>
+                      )}
+                    </div>
+                    <Link
+                      href={`/compare?start=${encodeURIComponent(startTime)}&end=${encodeURIComponent(endTime)}`}
+                      className="flex items-center gap-1.5 text-sm text-primary hover:underline shrink-0"
+                    >
+                      <ArrowLeft className="h-3.5 w-3.5" />
+                      Change tier
+                    </Link>
+                  </CardContent>
+                </Card>
+              {/* )} */}
 
               {/* ══════════════════════════════════════════════ */}
               {/*  DATES SECTION                                */}
@@ -540,19 +592,19 @@ function BookingFormContent() {
                   </CardContent>
                 </Card>
               )} */}
-              <Card className="rounded-2xl p-6 lg:p-8 bg-card text-card-foreground border border-primary ring-0">
+              {/* <Card className="rounded-2xl p-6 lg:p-8 bg-card text-card-foreground border border-primary ring-0">
                 <CardHeader className="p-0">
                   <CardTitle className="flex items-center gap-2 text-lg font-bold mb-1">
                     Select Provider &amp; Pay
                   </CardTitle>
                   <CardDescription>
                     {hasDates
-                      ? "Review the prices above and click to proceed to secure checkout."
+                      ? "Review the price and click to proceed to secure checkout."
                       : "Enter your parking dates to enable booking."}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="p-0 mt-5 flex flex-col gap-3">
-                  {BUSINESSES.map((b) => {
+                  {visibleBusinesses.map((b) => {
                     const bp = bizPrices[b.id];
                     const isDummy = b.businessId === null;
                     const isPending = pendingBiz === b.businessId;
@@ -632,7 +684,7 @@ function BookingFormContent() {
                     );
                   })}
                 </CardContent>
-              </Card>
+              </Card> */}
 
               {/* ══════════════════════════════════════════════ */}
               {/*  PERSONAL DETAILS SECTION                     */}
@@ -902,6 +954,85 @@ function BookingFormContent() {
                   />
                 </CardContent>
               </Card>
+               {visibleBusinesses.map((b) => {
+                    const bp = bizPrices[b.id];
+                    const isDummy = b.businessId === null;
+                    const isPending = pendingBiz === b.businessId;
+                    const hasPrice =
+                      !isDummy &&
+                      bp.totalPrice !== null &&
+                      bp.totalDays !== null;
+
+                    return (
+                      <button
+                        key={b.id}
+                        type="button"
+                        disabled={
+                          isDummy ||
+                          isPending ||
+                          bp.loading ||
+                          !hasDates ||
+                          !!pendingBiz
+                        }
+                        onClick={() =>
+                          b.businessId && handleBookWith(b.businessId)
+                        }
+                        className={`relative w-full inline-flex items-center justify-center gap-2 rounded-xl text-base font-semibold px-6 py-3.5 transition-opacity overflow-hidden
+                          ${
+                            isDummy
+                              ? "bg-muted text-muted-foreground cursor-not-allowed"
+                              : !hasDates || (!!pendingBiz && !isPending)
+                                ? "bg-muted text-muted-foreground cursor-not-allowed"
+                                : "bg-primary text-white hover:opacity-90"
+                          }`}
+                        style={
+                          isDummy || !hasDates || (!!pendingBiz && !isPending)
+                            ? {
+                                background: "#e5e7eb", // muted fallback
+                              }
+                            : {
+                                background: `
+            radial-gradient(ellipse 80% 120% at 50% -10%, #AA10EC 2%, var(--color-primary) 100%)
+          `,
+                              }
+                        }
+                      >
+                        {!(
+                          isDummy ||
+                          !hasDates ||
+                          (!!pendingBiz && !isPending)
+                        ) && (
+                          <div className="absolute inset-0 z-0 pointer-events-none">
+                            <NoiseTexture
+                              frequency={1}
+                              octaves={10}
+                              slope={0.6}
+                              noiseOpacity={1}
+                            />
+                          </div>
+                        )}
+                        {isPending ? (
+                          <>
+                            <Loader2 className="h-5 w-5 animate-spin" />
+                            Redirecting to {b.name}…
+                          </>
+                        ) : isDummy ? (
+                          `${b.name} — Coming Soon`
+                        ) : !hasDates ? (
+                          `Book with ${b.name} — Select dates first`
+                        ) : bp.loading ? (
+                          <>
+                            <Loader2 className="h-5 w-5 animate-spin" />
+                            {`Book with ${b.name} — Calculating price…`}
+                          </>
+                        ) : hasPrice ? (
+                          `Book with ${b.name} · ${formatPrice(bp.totalPrice!)} for ${formatDayCount(bp.totalDays!)}`
+                        ) : (
+                          `Book with ${b.name}`
+                        )}
+                      </button>
+                    );
+                  })}
 
               {/* ══════════════════════════════════════════════ */}
               {/*  PAYMENT BUTTONS — one per real business      */}

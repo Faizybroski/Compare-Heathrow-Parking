@@ -17,9 +17,10 @@ class ApiClient {
   private async request<T>(
     endpoint: string,
     options: RequestInit = {},
+    overrideBusinessId?: string,
   ): Promise<T> {
     const headers: Record<string, string> = {
-      "X-Business-Id": BUSINESS_ID,
+      "X-Business-Id": overrideBusinessId ?? BUSINESS_ID,
       "Content-Type": "application/json",
       ...((options.headers as Record<string, string>) || {}),
     };
@@ -152,84 +153,93 @@ class ApiClient {
   ): Promise<
     ApiResponse<{ token: string; admin: { name: string; email: string } }>
   > {
-    return this.request("/admin/login", {
+    return this.request("/compare/login", {
       method: "POST",
       body: JSON.stringify({ email, password }),
     });
   }
 
   async logout() {
-    return this.request("/admin/logout", { method: "POST" });
+    return this.request("/compare/logout", { method: "POST" });
+  }
+
+  async getProfile(): Promise<ApiResponse<{ _id: string; name: string; email: string }>> {
+    return this.request("/compare/profile");
   }
 
   // ── Admin endpoints ────────────────────────────────────────────────
 
-  async getDashboard(): Promise<ApiResponse<DashboardStats>> {
-    return this.request("/admin/dashboard");
+  async getDashboard(businessId?: string): Promise<ApiResponse<DashboardStats>> {
+    return this.request("/compare/dashboard", {}, businessId);
   }
 
-  async getBookings(params: {
-    status?: string;
-    page?: number;
-    limit?: number;
-    search?: string;
-  }): Promise<ApiResponse<PaginatedResponse<Booking>>> {
+  async getBookings(
+    params: {
+      status?: string;
+      page?: number;
+      limit?: number;
+      search?: string;
+    },
+    businessId?: string,
+  ): Promise<ApiResponse<PaginatedResponse<Booking>>> {
     const searchParams = new URLSearchParams();
     if (params.status) searchParams.set("status", params.status);
     if (params.page) searchParams.set("page", String(params.page));
     if (params.limit) searchParams.set("limit", String(params.limit));
     if (params.search) searchParams.set("search", params.search);
-    return this.request(`/admin/bookings?${searchParams.toString()}`);
+    return this.request(`/compare/bookings?${searchParams.toString()}`, {}, businessId);
   }
 
   async updateBookingStatus(
     id: string,
     status: string,
     actualExitTime?: string,
+    businessId?: string,
   ): Promise<ApiResponse<Booking>> {
-    return this.request(`/admin/bookings/${id}/status`, {
-      method: "PATCH",
-      body: JSON.stringify({ status, actualExitTime }),
-    });
+    return this.request(
+      `/compare/bookings/${id}/status`,
+      { method: "PATCH", body: JSON.stringify({ status, actualExitTime }) },
+      businessId,
+    );
   }
 
-  async exportBookingsExcel(data: BookingSelectionPayload): Promise<Blob> {
-    return this.request("/admin/bookings/export", {
+  async exportBookingsExcel(data: BookingSelectionPayload, businessId?: string): Promise<Blob> {
+    return this.request("/compare/bookings/export", {
       method: "POST",
       body: JSON.stringify(data),
-    });
+    }, businessId);
   }
 
-  async deleteBooking(id: string): Promise<ApiResponse<{ id: string }>> {
-    return this.request(`/admin/bookings/${id}`, {
-      method: "DELETE",
-    });
+  async deleteBooking(id: string, businessId?: string): Promise<ApiResponse<{ id: string }>> {
+    return this.request(`/compare/bookings/${id}`, { method: "DELETE" }, businessId);
   }
 
-  async bulkDeleteBookings(data: BookingSelectionPayload): Promise<
-    ApiResponse<{ deletedCount: number; deletedIds: string[] }>
-  > {
-    return this.request("/admin/bookings/bulk-delete", {
+  async bulkDeleteBookings(
+    data: BookingSelectionPayload,
+    businessId?: string,
+  ): Promise<ApiResponse<{ deletedCount: number; deletedIds: string[] }>> {
+    return this.request("/compare/bookings/bulk-delete", {
       method: "POST",
       body: JSON.stringify(data),
-    });
+    }, businessId);
   }
 
-  async getBookingToggle(): Promise<ApiResponse<{ bookingEnabled: boolean }>> {
-    return this.request("/admin/booking-toggle");
+  async getBookingToggle(businessId?: string): Promise<ApiResponse<{ bookingEnabled: boolean }>> {
+    return this.request("/compare/booking-toggle", {}, businessId);
   }
 
   async setBookingToggle(
     bookingEnabled: boolean,
+    businessId?: string,
   ): Promise<ApiResponse<{ bookingEnabled: boolean }>> {
-    return this.request("/admin/booking-toggle", {
+    return this.request("/compare/booking-toggle", {
       method: "PATCH",
       body: JSON.stringify({ bookingEnabled }),
-    });
+    }, businessId);
   }
 
   async getPricing(): Promise<ApiResponse<PricingConfig>> {
-    return this.request("/admin/pricing");
+    return this.request("/compare/pricing");
   }
 
   async updatePricing(data: {
@@ -237,7 +247,7 @@ class ApiClient {
     day11To30Increment: number;
     day31PlusIncrement: number;
   }): Promise<ApiResponse<PricingConfig>> {
-    return this.request("/admin/pricing", {
+    return this.request("/compare/pricing", {
       method: "POST",
       body: JSON.stringify(data),
     });

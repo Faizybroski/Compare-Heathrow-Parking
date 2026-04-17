@@ -1,7 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import Image from "next/image";
 import { api } from "@/lib/api";
+import { BUSINESSES } from "@/lib/businesses";
 import {
   Booking,
   BookingSelectionPayload,
@@ -78,10 +80,15 @@ type DeleteDialogState =
     }
   | null;
 
+const realBusinesses = BUSINESSES.filter((b) => b.businessId !== null);
+
 export default function BookingsPage() {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("");
+  const [selectedBusinessId, setSelectedBusinessId] = useState<string>(
+    realBusinesses[0]?.businessId ?? "",
+  );
   const [search, setSearch] = useState("");
   const [appliedSearch, setAppliedSearch] = useState("");
   const [page, setPage] = useState(1);
@@ -143,7 +150,7 @@ export default function BookingsPage() {
           page: effectivePage,
           limit: effectiveLimit,
           search: effectiveSearch || undefined,
-        });
+        }, selectedBusinessId);
 
         setBookings(res.data.bookings);
         setTotalPages(res.data.totalPages);
@@ -167,21 +174,21 @@ export default function BookingsPage() {
         }
       }
     },
-    [activeTab, appliedSearch, page, pageSize, showFeedback],
+    [activeTab, appliedSearch, page, pageSize, selectedBusinessId, showFeedback],
   );
 
-  const fetchToggle = async () => {
+  const fetchToggle = useCallback(async () => {
     try {
-      const res = await api.getBookingToggle();
+      const res = await api.getBookingToggle(selectedBusinessId);
       setBookingEnabled(res.data.bookingEnabled);
     } catch (err) {
       console.error(err);
     }
-  };
+  }, [selectedBusinessId]);
 
   useEffect(() => {
     void fetchToggle();
-  }, []);
+  }, [fetchToggle]);
 
   useEffect(() => {
     void fetchBookings();
@@ -293,7 +300,7 @@ export default function BookingsPage() {
             : new Date().toISOString()
           : undefined;
 
-      await api.updateBookingStatus(id, newStatus, actualExitTime);
+      await api.updateBookingStatus(id, newStatus, actualExitTime, selectedBusinessId);
       await fetchBookings(false);
       setSelectedBooking(null);
       showFeedback({
@@ -328,7 +335,7 @@ export default function BookingsPage() {
   const handleToggle = async () => {
     setToggleLoading(true);
     try {
-      const res = await api.setBookingToggle(!bookingEnabled);
+      const res = await api.setBookingToggle(!bookingEnabled, selectedBusinessId);
       setBookingEnabled(res.data.bookingEnabled);
     } catch (err) {
       console.error(err);
@@ -415,7 +422,7 @@ export default function BookingsPage() {
         exportMode === "selection"
           ? buildCurrentSelectionPayload()
           : buildAllMatchingPayload();
-      const blob = await api.exportBookingsExcel(payload);
+      const blob = await api.exportBookingsExcel(payload, selectedBusinessId);
 
       downloadBlob(
         blob,
@@ -509,7 +516,7 @@ export default function BookingsPage() {
       let deletedIds: string[] = [];
 
       if (deleteDialog.mode === "single") {
-        await api.deleteBooking(deleteDialog.bookingId);
+        await api.deleteBooking(deleteDialog.bookingId, selectedBusinessId);
         deletedCount = 1;
         deletedIds = [deleteDialog.bookingId];
         setSelectedIds((current) =>
@@ -523,7 +530,7 @@ export default function BookingsPage() {
           setSelectedBooking(null);
         }
       } else {
-        const res = await api.bulkDeleteBookings(buildCurrentSelectionPayload());
+        const res = await api.bulkDeleteBookings(buildCurrentSelectionPayload(), selectedBusinessId);
         deletedCount = res.data.deletedCount;
         deletedIds = res.data.deletedIds;
         clearSelection();
@@ -699,6 +706,45 @@ export default function BookingsPage() {
         </button>
       </div>
 
+      {/* ── BUSINESS SELECTOR ─────────────────────────────────────── */}
+      <div
+        className="flex flex-wrap items-center gap-2 rounded-2xl border p-4"
+        style={{ background: "var(--card)", borderColor: "var(--border)" }}
+      >
+        <span className="text-xs font-medium mr-1" style={{ color: "var(--muted-foreground)" }}>
+          Viewing bookings for:
+        </span>
+        {realBusinesses.map((b) => {
+          const active = selectedBusinessId === b.businessId;
+          return (
+            <button
+              key={b.id}
+              type="button"
+              onClick={() => {
+                if (b.businessId && b.businessId !== selectedBusinessId) {
+                  setSelectedBusinessId(b.businessId);
+                  clearSelection();
+                  setPage(1);
+                }
+              }}
+              className="inline-flex items-center gap-2 rounded-xl border px-3 py-1.5 text-sm font-medium transition-all"
+              style={{
+                borderColor: active ? "var(--primary)" : "var(--border)",
+                background: active ? "var(--primary)" : "var(--background)",
+                color: active ? "#fff" : "var(--foreground)",
+              }}
+            >
+              <div
+                className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 ${b.bg}`}
+              >
+                <Image src={b.img} alt={b.name} width={12} height={12} />
+              </div>
+              {b.name}
+            </button>
+          );
+        })}
+      </div>
+
       <div
         className="flex flex-wrap gap-1 rounded-xl p-1"
         style={{ background: "var(--muted)" }}
@@ -859,6 +905,9 @@ export default function BookingsPage() {
             );
             const isUpdatingThisBooking = updatingBookingId === booking._id;
             const isSelected = isBookingSelected(booking._id);
+            const providerBiz = realBusinesses.find(
+              (b) => b.businessId === selectedBusinessId,
+            );
 
             return (
               <div
@@ -897,6 +946,18 @@ export default function BookingsPage() {
                     <p className="truncate text-xs text-muted-foreground">
                       {booking.userEmail}
                     </p>
+                    {providerBiz && (
+                      <div className="mt-1.5 inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5"
+                        style={{ borderColor: "var(--border)", background: "var(--muted)" }}
+                      >
+                        <div className={`w-4 h-4 rounded-full flex items-center justify-center shrink-0 ${providerBiz.bg}`}>
+                          <Image src={providerBiz.img} alt={providerBiz.name} width={10} height={10} />
+                        </div>
+                        <span className="text-[10px] font-medium" style={{ color: "var(--muted-foreground)" }}>
+                          {providerBiz.name}
+                        </span>
+                      </div>
+                    )}
                   </div>
 
                   <div>

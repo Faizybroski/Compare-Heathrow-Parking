@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -26,16 +26,18 @@ export default function AdminLayout({
   const router = useRouter();
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [adminName] = useState(() => {
-    if (typeof window === "undefined") return "Admin";
+  const [adminName, setAdminName] = useState("Admin");
 
-    try {
-      const admin = localStorage.getItem("parkpro_admin");
-      return admin ? JSON.parse(admin).name || "Admin" : "Admin";
-    } catch {
-      return "Admin";
-    }
-  });
+  useEffect(() => {
+    if (pathname === "/login") return;
+    api
+      .getProfile()
+      .then((res) => setAdminName(res.data.name || "Admin"))
+      .catch(() => {
+        // Token invalid or expired — redirect to login
+        router.push("/login");
+      });
+  }, [pathname, router]);
 
   if (pathname === "/login") return <>{children}</>;
 
@@ -63,7 +65,7 @@ export default function AdminLayout({
                 PP
               </div>
               <span className="text-lg font-bold text-white">Heathrow Safe Parking</span> */}
-              <Image src="/white_logo.svg" alt="Logo" width={200} height={50} />
+              <Image src="/logo.svg" alt="Logo" width={200} height={50} />
               {/* <p className="flex items-center text-lg text-primary uppercase leading-none">
                 <span className="font-bold">Park</span>
                 <span className="font-normal">Pro</span>
@@ -137,7 +139,7 @@ export default function AdminLayout({
           >
             {sidebarLinks.find((l) => l.href === pathname)?.label || "Admin"}
           </h2>
-          <div className="px-4 py-4 self-end ml-auto ">
+          <div className="px-4 py-4 self-end ml-auto">
             <div className="flex items-center gap-3 mb-3 px-2">
               <div
                 className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold "
@@ -151,7 +153,7 @@ export default function AdminLayout({
             </div>
             <button
               onClick={handleLogout}
-              className="w-full flex items-center gap-3 px-4 py-2 rounded-xl text-sm text-primary hover:text-primary/50 hover:bg-primary/5 transition-all text-left"
+              className="flex-1 flex items-center gap-3 px-4 py-2 rounded-xl text-sm text-primary hover:text-primary/50 hover:bg-primary/5 transition-all text-left"
             >
               <LogOut className="w-4 h-4" />
               Logout
