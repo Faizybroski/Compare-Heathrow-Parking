@@ -34,7 +34,7 @@ export default function AirportPopover() {
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className="w-full h-11 rounded-md justify-between border border-ring bg-transparent backdrop-blur-md hover:bg-white/20 active:bg-white/20 data-[state=open]:bg-white/20"
+            className="w-full h-11 rounded-md justify-between font-normal border border-ring bg-transparent backdrop-blur-md hover:bg-white/20 active:bg-white/20 data-[state=open]:bg-white/20 data-[state=open]:border-primary data-[state=open]:ring-3 data-[state=open]:ring-primary/50 focus-visible:border-primary focus-visible:ring-3 focus-visible:ring-primary/50"
           >
             {current ? (
               <div className="flex flex-col text-left leading-tight">

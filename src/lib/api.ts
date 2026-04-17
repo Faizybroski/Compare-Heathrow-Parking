@@ -238,6 +238,20 @@ class ApiClient {
     }, businessId);
   }
 
+  async getTerminalMessages(businessId?: string): Promise<ApiResponse<{ messages: Record<string, string> }>> {
+    return this.request("/compare/terminal-messages", {}, businessId);
+  }
+
+  async updateTerminalMessages(
+    messages: Record<string, string>,
+    businessId?: string,
+  ): Promise<ApiResponse<{ messages: Record<string, string> }>> {
+    return this.request("/compare/terminal-messages", {
+      method: "PATCH",
+      body: JSON.stringify({ messages }),
+    }, businessId);
+  }
+
   async getPricing(): Promise<ApiResponse<PricingConfig>> {
     return this.request("/compare/pricing");
   }

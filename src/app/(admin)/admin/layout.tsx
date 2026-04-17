@@ -8,6 +8,7 @@ import {
   LayoutDashboard,
   ClipboardList,
   BadgeDollarSign,
+  Settings2,
   LogOut,
 } from "lucide-react";
 import { api } from "@/lib/api";
@@ -15,7 +16,8 @@ import { api } from "@/lib/api";
 const sidebarLinks = [
   { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/bookings", label: "Bookings", icon: ClipboardList },
-  { href: "/admin/pricing", label: "Pricing", icon: BadgeDollarSign },
+  // { href: "/admin/pricing", label: "Pricing", icon: BadgeDollarSign },
+  { href: "/admin/settings", label: "Settings", icon: Settings2 },
 ];
 
 export default function AdminLayout({

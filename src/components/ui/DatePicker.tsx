@@ -61,8 +61,8 @@ export function DateTimePicker({ value, onChange, homepage = false }: Props) {
       <PopoverTrigger asChild className="active:bg-primary">
         <Button
           variant="outline"
-          className="w-full h-11 rounded-md justify-start text-left font-normal border border-ring bg-transparent backdrop-blur-md hover:bg-white/20 active:bg-white/20 data-[state=open]:bg-white/20"
-        >
+          className="w-full h-11 rounded-md justify-start text-left font-normal border border-ring bg-transparent backdrop-blur-md hover:bg-white/20 active:bg-white/20 data-[state=open]:bg-white/20 focus-visible:border-primary focus-visible:ring-3 focus-visible:ring-primary/50 data-[state=open]:bg-white/20 data-[state=open]:border-primary data-[state=open]:ring-3 data-[state=open]:ring-primary/50"
+                  >
           <CalendarIcon className="mr-2 h-4 w-4 text-primary" />
 
           {date ? (

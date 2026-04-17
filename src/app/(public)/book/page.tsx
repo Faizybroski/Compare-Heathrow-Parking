@@ -12,6 +12,7 @@ import { api } from "@/lib/api";
 import { BUSINESSES, fetchForBusiness } from "@/lib/businesses";
 import { formatDayCount, formatPrice } from "@/lib/utils";
 import { DateTimePicker } from "@/components/ui/DatePicker";
+import {TerminalSelect} from "@/components/ui/TerminalPicker"
 import PageHero from "@/components/shared/PageHero";
 import {
   Form,
@@ -46,8 +47,11 @@ import {
   Tag,
   Ban,
   CheckCircle2,
-  ArrowLeft
+  ArrowLeft,
+  Check,
+  ChevronsUpDown,
 } from "lucide-react";
+
 
 // ─── regex patterns ───────────────────────────────────────────────
 const FLIGHT_REGEX = /^[A-Z]{2,3}\d{1,4}[A-Z]?$/i;
@@ -212,18 +216,17 @@ function BookingFormContent() {
   const startTime = form.watch("bookedStartTime");
   const endTime = form.watch("bookedEndTime");
 
-
   const selectedBiz = visibleBusinesses?.[0];
 
-const localDays =
-  selectedBiz && bizPrices[selectedBiz.id]?.totalDays !== null
-    ? bizPrices[selectedBiz.id]?.totalDays
-    : null;
+  const localDays =
+    selectedBiz && bizPrices[selectedBiz.id]?.totalDays !== null
+      ? bizPrices[selectedBiz.id]?.totalDays
+      : null;
 
-const localPrice =
-  selectedBiz && bizPrices[selectedBiz.id]?.totalPrice !== null
-    ? bizPrices[selectedBiz.id]?.totalPrice
-    : null;
+  const localPrice =
+    selectedBiz && bizPrices[selectedBiz.id]?.totalPrice !== null
+      ? bizPrices[selectedBiz.id]?.totalPrice
+      : null;
 
   // fetch prices for all real businesses when dates change
   useEffect(() => {
@@ -347,34 +350,34 @@ const localPrice =
               )}
 
               {/* {selectedBusinessId && visibleBusinesses && ( */}
-                <Card className="rounded-2xl p-5 bg-primary/5 text-card-foreground border border-primary ring-0">
-                  <CardContent className="p-0 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <CheckCircle2 className="h-5 w-5 text-primary shrink-0" />
-                        <p className="font-bold text-foreground">
-                          {visibleBusinesses[0].name}
-                        </p>
-                      </div>
-                      {localDays !== null && localPrice !== null && (
-                        <p className="text-sm text-muted-foreground pl-7">
-                          {formatDayCount(localDays)} ·{" "}
-                          <span className="font-semibold text-primary">
-                            {formatPrice(localPrice)}
-                          </span>{" "}
-                          total
-                        </p>
-                      )}
+              <Card className="rounded-2xl p-5 bg-primary/5 text-card-foreground border border-primary ring-0">
+                <CardContent className="p-0 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <CheckCircle2 className="h-5 w-5 text-primary shrink-0" />
+                      <p className="font-bold text-foreground">
+                        {visibleBusinesses[0].name}
+                      </p>
                     </div>
-                    <Link
-                      href={`/compare?start=${encodeURIComponent(startTime)}&end=${encodeURIComponent(endTime)}`}
-                      className="flex items-center gap-1.5 text-sm text-primary hover:underline shrink-0"
-                    >
-                      <ArrowLeft className="h-3.5 w-3.5" />
-                      Change tier
-                    </Link>
-                  </CardContent>
-                </Card>
+                    {localDays !== null && localPrice !== null && (
+                      <p className="text-sm text-muted-foreground pl-7">
+                        {formatDayCount(localDays)} ·{" "}
+                        <span className="font-semibold text-primary">
+                          {formatPrice(localPrice)}
+                        </span>{" "}
+                        total
+                      </p>
+                    )}
+                  </div>
+                  <Link
+                    href={`/compare?start=${encodeURIComponent(startTime)}&end=${encodeURIComponent(endTime)}`}
+                    className="flex items-center gap-1.5 text-sm text-primary hover:underline shrink-0"
+                  >
+                    <ArrowLeft className="h-3.5 w-3.5" />
+                    Change tier
+                  </Link>
+                </CardContent>
+              </Card>
               {/* )} */}
 
               {/* ══════════════════════════════════════════════ */}
@@ -897,14 +900,24 @@ const localPrice =
                       <FormItem className="col-span-2">
                         <FormLabel>Departure Terminal</FormLabel>
                         <FormControl>
-                          <div className="relative">
-                            <PlaneTakeoff className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-primary" />
-                            <Input
-                              placeholder="e.g. T2"
-                              className="pl-9"
+                          <TerminalSelect
+                                    value={field.value}
+                                    onChange={field.onChange}
+                                  />
+                          {/* <div className="relative">
+                            <PlaneTakeoff className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-primary pointer-events-none z-10" />
+                            <select
+                              className="w-full h-10 pl-9 pr-4 rounded-md border border-input bg-background text-sm appearance-none"
                               {...field}
-                            />
-                          </div>
+                            >
+                              <option value="">— Not selected —</option>
+                              <option value="T1">T1</option>
+                              <option value="T2">T2</option>
+                              <option value="T3">T3</option>
+                              <option value="T4">T4</option>
+                              <option value="T5">T5</option>
+                            </select>
+                          </div> */}
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -918,14 +931,24 @@ const localPrice =
                       <FormItem>
                         <FormLabel>Arrival Terminal</FormLabel>
                         <FormControl>
-                          <div className="relative">
-                            <PlaneLanding className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-primary" />
-                            <Input
-                              placeholder="e.g. T5"
-                              className="pl-9"
+                          <TerminalSelect
+          value={field.value}
+          onChange={field.onChange}
+        />
+                          {/* <div className="relative">
+                            <PlaneLanding className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-primary pointer-events-none z-10" />
+                            <Select
+                              className="w-full h-10 pl-9 pr-4 rounded-md border border-input bg-background text-sm appearance-none"
                               {...field}
-                            />
-                          </div>
+                            >
+                              <option value="">— Not selected —</option>
+                              <option value="T1">T1</option>
+                              <option value="T2">T2</option>
+                              <option value="T3">T3</option>
+                              <option value="T4">T4</option>
+                              <option value="T5">T5</option>
+                            </Select>
+                          </div> */}
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -954,30 +977,26 @@ const localPrice =
                   />
                 </CardContent>
               </Card>
-               {visibleBusinesses.map((b) => {
-                    const bp = bizPrices[b.id];
-                    const isDummy = b.businessId === null;
-                    const isPending = pendingBiz === b.businessId;
-                    const hasPrice =
-                      !isDummy &&
-                      bp.totalPrice !== null &&
-                      bp.totalDays !== null;
+              {visibleBusinesses.map((b) => {
+                const bp = bizPrices[b.id];
+                const isDummy = b.businessId === null;
+                const isPending = pendingBiz === b.businessId;
+                const hasPrice =
+                  !isDummy && bp.totalPrice !== null && bp.totalDays !== null;
 
-                    return (
-                      <button
-                        key={b.id}
-                        type="button"
-                        disabled={
-                          isDummy ||
-                          isPending ||
-                          bp.loading ||
-                          !hasDates ||
-                          !!pendingBiz
-                        }
-                        onClick={() =>
-                          b.businessId && handleBookWith(b.businessId)
-                        }
-                        className={`relative w-full inline-flex items-center justify-center gap-2 rounded-xl text-base font-semibold px-6 py-3.5 transition-opacity overflow-hidden
+                return (
+                  <button
+                    key={b.id}
+                    type="button"
+                    disabled={
+                      isDummy ||
+                      isPending ||
+                      bp.loading ||
+                      !hasDates ||
+                      !!pendingBiz
+                    }
+                    onClick={() => b.businessId && handleBookWith(b.businessId)}
+                    className={`relative w-full inline-flex items-center justify-center gap-2 rounded-xl text-base font-semibold px-6 py-3.5 transition-opacity overflow-hidden
                           ${
                             isDummy
                               ? "bg-muted text-muted-foreground cursor-not-allowed"
@@ -985,54 +1004,54 @@ const localPrice =
                                 ? "bg-muted text-muted-foreground cursor-not-allowed"
                                 : "bg-primary text-white hover:opacity-90"
                           }`}
-                        style={
-                          isDummy || !hasDates || (!!pendingBiz && !isPending)
-                            ? {
-                                background: "#e5e7eb", // muted fallback
-                              }
-                            : {
-                                background: `
+                    style={
+                      isDummy || !hasDates || (!!pendingBiz && !isPending)
+                        ? {
+                            background: "#e5e7eb", // muted fallback
+                          }
+                        : {
+                            background: `
             radial-gradient(ellipse 80% 120% at 50% -10%, #AA10EC 2%, var(--color-primary) 100%)
           `,
-                              }
-                        }
-                      >
-                        {!(
-                          isDummy ||
-                          !hasDates ||
-                          (!!pendingBiz && !isPending)
-                        ) && (
-                          <div className="absolute inset-0 z-0 pointer-events-none">
-                            <NoiseTexture
-                              frequency={1}
-                              octaves={10}
-                              slope={0.6}
-                              noiseOpacity={1}
-                            />
-                          </div>
-                        )}
-                        {isPending ? (
-                          <>
-                            <Loader2 className="h-5 w-5 animate-spin" />
-                            Redirecting to {b.name}…
-                          </>
-                        ) : isDummy ? (
-                          `${b.name} — Coming Soon`
-                        ) : !hasDates ? (
-                          `Book with ${b.name} — Select dates first`
-                        ) : bp.loading ? (
-                          <>
-                            <Loader2 className="h-5 w-5 animate-spin" />
-                            {`Book with ${b.name} — Calculating price…`}
-                          </>
-                        ) : hasPrice ? (
-                          `Book with ${b.name} · ${formatPrice(bp.totalPrice!)} for ${formatDayCount(bp.totalDays!)}`
-                        ) : (
-                          `Book with ${b.name}`
-                        )}
-                      </button>
-                    );
-                  })}
+                          }
+                    }
+                  >
+                    {!(
+                      isDummy ||
+                      !hasDates ||
+                      (!!pendingBiz && !isPending)
+                    ) && (
+                      <div className="absolute inset-0 z-0 pointer-events-none">
+                        <NoiseTexture
+                          frequency={1}
+                          octaves={10}
+                          slope={0.6}
+                          noiseOpacity={1}
+                        />
+                      </div>
+                    )}
+                    {isPending ? (
+                      <>
+                        <Loader2 className="h-5 w-5 animate-spin" />
+                        Redirecting to {b.name}…
+                      </>
+                    ) : isDummy ? (
+                      `${b.name} — Coming Soon`
+                    ) : !hasDates ? (
+                      `Book with ${b.name} — Select dates first`
+                    ) : bp.loading ? (
+                      <>
+                        <Loader2 className="h-5 w-5 animate-spin" />
+                        {`Book with ${b.name} — Calculating price…`}
+                      </>
+                    ) : hasPrice ? (
+                      `Book with ${b.name} · ${formatPrice(bp.totalPrice!)} for ${formatDayCount(bp.totalDays!)}`
+                    ) : (
+                      `Book with ${b.name}`
+                    )}
+                  </button>
+                );
+              })}
 
               {/* ══════════════════════════════════════════════ */}
               {/*  PAYMENT BUTTONS — one per real business      */}
