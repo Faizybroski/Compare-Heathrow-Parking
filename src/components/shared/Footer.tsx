@@ -46,7 +46,6 @@ export default function Footer() {
                 { href: "/", label: "Home" },
                 { href: "/book", label: "Book Parking" },
                 { href: "/track", label: "Track Booking" },
-                { href: "/about", label: "About Us" },
               ].map(({ href, label }) => (
                 <li key={href}>
                   <Link
@@ -69,7 +68,8 @@ export default function Footer() {
               {[
                 { href: "/faqs", label: "FAQs" },
                 { href: "/contact", label: "Contact Us" },
-                { href: "/support", label: "Support" },
+                // { href: "/support", label: "Support" },
+                { href: "/about", label: "About Us" },
               ].map(({ href, label }) => (
                 <li key={href}>
                   <Link
@@ -89,7 +89,7 @@ export default function Footer() {
               Contact Us
             </h4>
             <div className="space-y-3 text-sm">
-              <div className="flex items-start gap-3 opacity-70 hover:opacity-100 transition">
+              {/* <div className="flex items-start gap-3 opacity-70 hover:opacity-100 transition">
                 <a
                   href="https://maps.app.goo.gl/5Kpmej29MWZ5qRbD7"
                   target="_blank"
@@ -97,7 +97,7 @@ export default function Footer() {
                 >
                   103 Pennine Way <br /> UB3 5LJ
                 </a>
-              </div>
+              </div> */}
 
               <div className="flex items-center gap-3 opacity-70 hover:opacity-100 transition">
                 <a href="tel:07508624155">07508624155</a>
