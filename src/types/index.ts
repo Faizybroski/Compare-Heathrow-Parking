@@ -131,4 +131,6 @@ export interface BookingSelectionPayload {
   excludeIds?: string[];
   search?: string;
   status?: BookingStatus;
+  dateFrom?: string;
+  dateTo?: string;
 }
