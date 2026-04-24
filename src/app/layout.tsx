@@ -6,9 +6,9 @@ import { cn } from "@/lib/utils";
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
-  title: "Heathrow Safe Parking - Secure Airport Parking",
+  title: "Compare Heathrow Parking - Secure Airport Parking",
   description:
-    "Book secure, affordable airport parking with Heathrow Safe Parking. Guaranteed spaces, competitive prices, and hassle-free parking.",
+    "Book secure, affordable airport parking with Compare Heathrow Parking. Guaranteed spaces, competitive prices, and hassle-free parking.",
   keywords: "airport parking, car park, booking, secure parking",
 };
 
