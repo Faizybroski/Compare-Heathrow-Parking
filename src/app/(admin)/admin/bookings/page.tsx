@@ -205,6 +205,7 @@ export default function BookingsPage() {
   );
 
   const fetchToggle = useCallback(async () => {
+    if (selectedBusinessId === "compare") return;
     try {
       const res = await api.getBookingToggle(selectedBusinessId);
       setBookingEnabled(res.data.bookingEnabled);
@@ -386,6 +387,13 @@ export default function BookingsPage() {
   };
 
   const handleToggle = async () => {
+    if (selectedBusinessId === "compare") {
+      showFeedback({
+          type: "error",
+          message: "Unable to toggle booking because you selected all businesses. Select a specific business to toggle bookings.",
+        });
+    return
+    };
     setToggleLoading(true);
     try {
       const res = await api.setBookingToggle(
@@ -462,7 +470,7 @@ export default function BookingsPage() {
     search: appliedSearch || undefined,
     excludeIds: [],
     dateFrom: appliedDateFrom || undefined,
-          dateTo: appliedDateTo || undefined,
+    dateTo: appliedDateTo || undefined,
   });
 
   const downloadBlob = (blob: Blob, fileName: string) => {
@@ -508,41 +516,42 @@ export default function BookingsPage() {
   };
 
   const handleExportPdf = async () => {
-      setExportingPdf(true);
-      try {
-        const res = await api.getBookings({
-          status: activeTab || undefined,
-          page: 1,
-          limit: 10000,
-          search: appliedSearch || undefined,
-          dateFrom: appliedDateFrom || undefined,
-          dateTo: appliedDateTo || undefined,
-        });
-        const opened = exportBookingsPdf(res.data.bookings, {
-          exportDate: formatDateTime(new Date()),
-          statusFilter: activeTab || undefined,
-          searchQuery: appliedSearch || undefined,
-          dateFrom: appliedDateFrom || undefined,
-          dateTo: appliedDateTo || undefined,
-          totalCount: res.data.total,
-        });
-        if (!opened) {
-          showFeedback({
-            type: "error",
-            message: "Unable to open PDF export window. Check your popup blocker.",
-          });
-        }
-      } catch (err) {
-        console.error(err);
+    setExportingPdf(true);
+    try {
+      const res = await api.getBookings({
+        status: activeTab || undefined,
+        page: 1,
+        limit: 10000,
+        search: appliedSearch || undefined,
+        dateFrom: appliedDateFrom || undefined,
+        dateTo: appliedDateTo || undefined,
+      });
+      const opened = exportBookingsPdf(res.data.bookings, {
+        exportDate: formatDateTime(new Date()),
+        statusFilter: activeTab || undefined,
+        searchQuery: appliedSearch || undefined,
+        dateFrom: appliedDateFrom || undefined,
+        dateTo: appliedDateTo || undefined,
+        totalCount: res.data.total,
+      });
+      if (!opened) {
         showFeedback({
           type: "error",
           message:
-            err instanceof Error ? err.message : "Failed to generate PDF report.",
+            "Unable to open PDF export window. Check your popup blocker.",
         });
-      } finally {
-        setExportingPdf(false);
       }
-    };
+    } catch (err) {
+      console.error(err);
+      showFeedback({
+        type: "error",
+        message:
+          err instanceof Error ? err.message : "Failed to generate PDF report.",
+      });
+    } finally {
+      setExportingPdf(false);
+    }
+  };
 
   const handlePrintInvoice = (booking: Booking) => {
     const opened = printBookingInvoice(booking);
@@ -740,7 +749,7 @@ export default function BookingsPage() {
             )}
             Export Excel
           </button>
-<button
+          <button
             onClick={() => void handleExportPdf()}
             disabled={exportingPdf}
             className="flex items-center gap-2 rounded-xl border px-4 py-2 text-sm font-semibold transition-all hover:shadow-md disabled:opacity-50"
@@ -778,7 +787,7 @@ export default function BookingsPage() {
           {feedback.message}
         </div>
       )}
-
+      {selectedBusinessId != "compare" && (
       <div
         className="flex items-center justify-between rounded-2xl border p-4"
         style={{ background: "var(--card)", borderColor: "var(--border)" }}
@@ -819,6 +828,7 @@ export default function BookingsPage() {
           {bookingEnabled ? "Enabled" : "Disabled"}
         </button>
       </div>
+)}
 
       {/* ── BUSINESS SELECTOR ─────────────────────────────────────── */}
       <div
@@ -831,33 +841,51 @@ export default function BookingsPage() {
         >
           Viewing bookings for:
         </span>
+        <button
+          type="button"
+          onClick={() => {
+            // if (b.businessId && b.businessId !== selectedBusinessId) {
+              setSelectedBusinessId("compare");
+              clearSelection();
+              setPage(1);
+            // }
+          }}
+          className="inline-flex items-center gap-2 rounded-xl border px-3 py-1.5 text-sm font-medium transition-all"
+          style={{
+            borderColor: selectedBusinessId === "compare" ? "var(--primary)" : "var(--border)",
+            background: selectedBusinessId === "compare" ? "var(--primary)" : "var(--background)",
+            color: selectedBusinessId === "compare" ? "#fff" : "var(--foreground)",
+          }}
+        >
+          All
+        </button>
         {realBusinesses.map((b) => {
           const active = selectedBusinessId === b.businessId;
           return (
-            <button
-              key={b.id}
-              type="button"
-              onClick={() => {
-                if (b.businessId && b.businessId !== selectedBusinessId) {
-                  setSelectedBusinessId(b.businessId);
-                  clearSelection();
-                  setPage(1);
-                }
-              }}
-              className="inline-flex items-center gap-2 rounded-xl border px-3 py-1.5 text-sm font-medium transition-all"
-              style={{
-                borderColor: active ? "var(--primary)" : "var(--border)",
-                background: active ? "var(--primary)" : "var(--background)",
-                color: active ? "#fff" : "var(--foreground)",
-              }}
-            >
-              <div
-                className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 ${b.bg}`}
+              <button
+                key={b.id}
+                type="button"
+                onClick={() => {
+                  if (b.businessId && b.businessId !== selectedBusinessId) {
+                    setSelectedBusinessId(b.businessId);
+                    clearSelection();
+                    setPage(1);
+                  }
+                }}
+                className="inline-flex items-center gap-2 rounded-xl border px-3 py-1.5 text-sm font-medium transition-all"
+                style={{
+                  borderColor: active ? "var(--primary)" : "var(--border)",
+                  background: active ? "var(--primary)" : "var(--background)",
+                  color: active ? "#fff" : "var(--foreground)",
+                }}
               >
-                <Image src={b.img} alt={b.name} width={12} height={12} />
-              </div>
-              {b.name}
-            </button>
+                <div
+                  className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 ${b.bg}`}
+                >
+                  <Image src={b.img} alt={b.name} width={12} height={12} />
+                </div>
+                {b.name}
+              </button>
           );
         })}
       </div>
@@ -891,25 +919,25 @@ export default function BookingsPage() {
       <div className="flex flex-col gap-3 rounded-2xl border p-4 md:flex-row md:items-center md:justify-between">
         <form onSubmit={handleSearch} className="flex flex-1 flex-col gap-2">
           <div className="flex gap-2">
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search by name, email, tracking #, or car reg..."
-            className="flex-1 rounded-xl border px-4 py-2.5 text-sm"
-            style={{
-              background: "var(--card)",
-              borderColor: "var(--border)",
-              color: "var(--foreground)",
-            }}
-          />
-          <button
-            type="submit"
-            className="rounded-xl px-5 py-2.5 text-sm font-medium text-white"
-            style={{ background: "var(--primary)" }}
-          >
-            Search
-          </button>
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search by name, email, tracking #, or car reg..."
+              className="flex-1 rounded-xl border px-4 py-2.5 text-sm"
+              style={{
+                background: "var(--card)",
+                borderColor: "var(--border)",
+                color: "var(--foreground)",
+              }}
+            />
+            <button
+              type="submit"
+              className="rounded-xl px-5 py-2.5 text-sm font-medium text-white"
+              style={{ background: "var(--primary)" }}
+            >
+              Search
+            </button>
           </div>
           <div className="flex flex-wrap items-center gap-2 text-sm">
             <span style={{ color: "var(--muted-foreground)" }}>From</span>
@@ -1064,7 +1092,7 @@ export default function BookingsPage() {
             const isUpdatingThisBooking = updatingBookingId === booking._id;
             const isSelected = isBookingSelected(booking._id);
             const providerBiz = realBusinesses.find(
-              (b) => b.businessId === selectedBusinessId,
+              (b) => b.businessId === booking.businessId,
             );
 
             return (

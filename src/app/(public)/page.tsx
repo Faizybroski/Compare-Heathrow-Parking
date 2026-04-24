@@ -108,13 +108,13 @@ const providers = [
     name: "Heathrow Safe Parking",
     desc: "Meet & greet parking right at the terminal.",
   },
-  // {
-  //   initials: "PE",
-  //   img: "/parkease_logo.svg",
-  //   bg: "bg-[#155263]",
-  //   name: "ParkEase",
-  //   desc: "Affordable parking with solid security.",
-  // },
+  {
+    initials: "PE",
+    img: "/parkease_logo.svg",
+    bg: "bg-[#155263]",
+    name: "ParkEase",
+    desc: "Affordable parking with solid security.",
+  },
 ];
 
 const testimonials = [
@@ -666,8 +666,8 @@ export default function CompareHeathrowParking() {
           </div>
 
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-6">
-          {/* <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"> */}
+          {/* <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-6"> */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             {providers.map((p) => (
               <Card key={p.name} className="border">
                 <CardContent className="p-6 sm:p-8 text-center">
