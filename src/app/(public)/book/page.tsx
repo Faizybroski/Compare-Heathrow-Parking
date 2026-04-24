@@ -12,7 +12,7 @@ import { api } from "@/lib/api";
 import { BUSINESSES, fetchForBusiness } from "@/lib/businesses";
 import { formatDayCount, formatPrice } from "@/lib/utils";
 import { DateTimePicker } from "@/components/ui/DatePicker";
-import {TerminalSelect} from "@/components/ui/TerminalPicker"
+import { TerminalSelect } from "@/components/ui/TerminalPicker";
 import PageHero from "@/components/shared/PageHero";
 import {
   Form,
@@ -51,7 +51,6 @@ import {
   Check,
   ChevronsUpDown,
 } from "lucide-react";
-
 
 // ─── regex patterns ───────────────────────────────────────────────
 const FLIGHT_REGEX = /^[A-Z]{2,3}\d{1,4}[A-Z]?$/i;
@@ -269,6 +268,27 @@ function BookingFormContent() {
         });
     });
   }, [startTime, endTime]);
+
+  useEffect(() => {
+    const errors = form.formState.errors;
+
+    if (Object.keys(errors).length > 0) {
+      const firstErrorField = Object.keys(errors)[0];
+
+      const el = document.querySelector(
+        `[name="${firstErrorField}"]`,
+      ) as HTMLElement | null;
+
+      if (el) {
+        el.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+
+        el.focus({ preventScroll: true });
+      }
+    }
+  }, [form.formState.errors]);
 
   // ── per-business checkout ─────────────────────────────────────
   const handleBookWith = async (businessId: string) => {
@@ -901,9 +921,9 @@ function BookingFormContent() {
                         <FormLabel>Departure Terminal</FormLabel>
                         <FormControl>
                           <TerminalSelect
-                                    value={field.value}
-                                    onChange={field.onChange}
-                                  />
+                            value={field.value}
+                            onChange={field.onChange}
+                          />
                           {/* <div className="relative">
                             <PlaneTakeoff className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-primary pointer-events-none z-10" />
                             <select
@@ -932,9 +952,9 @@ function BookingFormContent() {
                         <FormLabel>Arrival Terminal</FormLabel>
                         <FormControl>
                           <TerminalSelect
-          value={field.value}
-          onChange={field.onChange}
-        />
+                            value={field.value}
+                            onChange={field.onChange}
+                          />
                           {/* <div className="relative">
                             <PlaneLanding className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-primary pointer-events-none z-10" />
                             <Select
