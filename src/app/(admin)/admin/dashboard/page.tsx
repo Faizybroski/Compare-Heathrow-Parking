@@ -182,7 +182,7 @@ export default function DashboardPage() {
             Overview — All Businesses
           </h1>
           <p className="text-sm mt-0.5" style={{ color: "var(--muted-foreground)" }}>
-            Showing only bookings made via Heathrow Compare
+            Showing only bookings made via Compare Heathrow Parking 
           </p>
         </div>
         <button

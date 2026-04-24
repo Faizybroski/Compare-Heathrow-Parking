@@ -40,14 +40,18 @@ function PaymentCancelledContent() {
         {/* Service provider note */}
         {brand && (
           <div className="flex items-center gap-3 rounded-xl border border-purple-200 bg-purple-50 px-4 py-3 text-left">
-            <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${brand.bg}`}>
+            <div
+              className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${brand.bg}`}
+            >
               <Image src={brand.img} alt={brand.name} width={18} height={18} />
             </div>
             <div>
               <p className="text-sm font-semibold text-purple-900">
                 Service provided by {brand.name}
               </p>
-              <p className="text-xs text-purple-600">Booked via Heathrow Compare Parking</p>
+              <p className="text-xs text-purple-600">
+                Booked via Compare Heathrow Parking
+              </p>
             </div>
           </div>
         )}
@@ -55,14 +59,16 @@ function PaymentCancelledContent() {
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <Button asChild className="relative overflow-hidden">
             <Link href={bookAgainHref}>
-            <div className="absolute inset-0 z-0 pointer-events-none">
-                          <NoiseTexture
-                            frequency={1}
-                            octaves={10}
-                            slope={0.6}
-                            noiseOpacity={1}
-                          />
-                        </div>Try Again</Link>
+              <div className="absolute inset-0 z-0 pointer-events-none">
+                <NoiseTexture
+                  frequency={1}
+                  octaves={10}
+                  slope={0.6}
+                  noiseOpacity={1}
+                />
+              </div>
+              Try Again
+            </Link>
           </Button>
           <Button asChild variant="outline">
             <Link href="/">Back to Home</Link>

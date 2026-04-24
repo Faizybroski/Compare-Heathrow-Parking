@@ -147,7 +147,7 @@ function TrackContent() {
                     <Image src={brand.img} alt={brand.name} width={16} height={16} />
                   </div>
                   <p className="text-sm text-purple-800">
-                    Service provided by <strong>{brand.name}</strong> — booked via Heathrow Compare Parking
+                    Service provided by <strong>{brand.name}</strong> — booked via Compare Heathrow Parking
                   </p>
                 </div>
               ) : null;

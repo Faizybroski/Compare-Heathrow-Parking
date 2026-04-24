@@ -122,7 +122,7 @@ function PaymentSuccessContent() {
                 Service provided by {brand.name}
               </p>
               <p className="text-xs text-purple-600">
-                Booked via Heathrow Compare Parking
+                Booked via Compare Heathrow Parking
               </p>
             </div>
           </div>
