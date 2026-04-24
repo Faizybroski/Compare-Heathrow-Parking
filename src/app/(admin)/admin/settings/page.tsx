@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import Image from "next/image";
 import { api } from "@/lib/api";
 import { BUSINESSES, BusinessConfig } from "@/lib/businesses";
-import { CheckCircle2, Save, Loader2 } from "lucide-react";
+import { CheckCircle2, Save, Loader2, KeyRound } from "lucide-react";
 
 const TERMINALS = ["T2", "T3", "T4", "T5"] as const;
 type Terminal = (typeof TERMINALS)[number];
@@ -24,7 +24,47 @@ type BizState = {
 const emptyMessages = (): Record<Terminal, string> =>
   Object.fromEntries(TERMINALS.map((t) => [t, ""])) as Record<Terminal, string>;
 
+type PwForm = { currentPassword: string; newPassword: string; confirm: string };
+type PwState = { saving: boolean; saved: boolean; error: string };
+
 export default function SettingsPage() {
+  const [pwForm, setPwForm] = useState<PwForm>({
+    currentPassword: "",
+    newPassword: "",
+    confirm: "",
+  });
+  const [pwState, setPwState] = useState<PwState>({
+    saving: false,
+    saved: false,
+    error: "",
+  });
+
+  const handlePwFieldChange = (field: keyof PwForm, value: string) => {
+    setPwForm((prev) => ({ ...prev, [field]: value }));
+    setPwState((prev) => ({ ...prev, saved: false, error: "" }));
+  };
+
+  const handlePwSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (pwForm.newPassword !== pwForm.confirm) {
+      setPwState((prev) => ({ ...prev, error: "Passwords do not match" }));
+      return;
+    }
+    setPwState({ saving: true, saved: false, error: "" });
+    try {
+      await api.changePassword(pwForm.currentPassword, pwForm.newPassword);
+      setPwForm({ currentPassword: "", newPassword: "", confirm: "" });
+      setPwState({ saving: false, saved: true, error: "" });
+      setTimeout(() => setPwState((prev) => ({ ...prev, saved: false })), 3000);
+    } catch (err) {
+      setPwState({
+        saving: false,
+        saved: false,
+        error: err instanceof Error ? err.message : "Failed to change password",
+      });
+    }
+  };
+
   const [bizState, setBizState] = useState<Record<string, BizState>>(() =>
     Object.fromEntries(
       realBusinesses.map((b) => [
@@ -124,7 +164,7 @@ export default function SettingsPage() {
         </p>
       </div>
 
-      <div className="space-y-6">
+      <div className="space-y-6" id="terminal-messages">
         {realBusinesses.map((biz) => {
           const state = bizState[biz.businessId];
 
@@ -237,6 +277,121 @@ export default function SettingsPage() {
             </div>
           );
         })}
+      </div>
+    </div>
+
+      {/* ── Change Password ── */}
+      <div className="space-y-6">
+        <div>
+          <h2
+            className="text-xl font-bold flex items-center gap-2"
+            style={{ color: "var(--foreground)" }}
+          >
+            <KeyRound className="w-5 h-5" />
+            Change Password
+          </h2>
+          <p className="text-sm mt-1" style={{ color: "var(--muted-foreground)" }}>
+            Update your admin account password. Minimum 8 characters.
+          </p>
+        </div>
+
+        <div
+          className="rounded-2xl border p-6"
+          style={{ background: "var(--card)", borderColor: "var(--border)" }}
+        >
+          {pwState.error && (
+            <p className="text-sm text-red-500 mb-4">{pwState.error}</p>
+          )}
+          <form onSubmit={handlePwSave} className="space-y-4 max-w-sm">
+            <div className="flex flex-col gap-1.5">
+              <label
+                className="text-sm font-semibold"
+                style={{ color: "var(--foreground)" }}
+              >
+                Current Password
+              </label>
+              <input
+                type="password"
+                value={pwForm.currentPassword}
+                onChange={(e) => handlePwFieldChange("currentPassword", e.target.value)}
+                placeholder="••••••••"
+                required
+                className="w-full rounded-xl border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+                style={{
+                  background: "var(--muted)",
+                  borderColor: "var(--border)",
+                  color: "var(--foreground)",
+                }}
+              />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label
+                className="text-sm font-semibold"
+                style={{ color: "var(--foreground)" }}
+              >
+                New Password
+              </label>
+              <input
+                type="password"
+                value={pwForm.newPassword}
+                onChange={(e) => handlePwFieldChange("newPassword", e.target.value)}
+                placeholder="••••••••"
+                required
+                minLength={8}
+                className="w-full rounded-xl border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+                style={{
+                  background: "var(--muted)",
+                  borderColor: "var(--border)",
+                  color: "var(--foreground)",
+                }}
+              />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label
+                className="text-sm font-semibold"
+                style={{ color: "var(--foreground)" }}
+              >
+                Confirm New Password
+              </label>
+              <input
+                type="password"
+                value={pwForm.confirm}
+                onChange={(e) => handlePwFieldChange("confirm", e.target.value)}
+                placeholder="••••••••"
+                required
+                minLength={8}
+                className="w-full rounded-xl border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+                style={{
+                  background: "var(--muted)",
+                  borderColor: "var(--border)",
+                  color: "var(--foreground)",
+                }}
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={pwState.saving}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold bg-primary text-white disabled:opacity-50 transition-all hover:opacity-90"
+            >
+              {pwState.saving ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Saving…
+                </>
+              ) : pwState.saved ? (
+                <>
+                  <CheckCircle2 className="w-4 h-4" />
+                  Password Changed
+                </>
+              ) : (
+                <>
+                  <Save className="w-4 h-4" />
+                  Change Password
+                </>
+              )}
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   );
