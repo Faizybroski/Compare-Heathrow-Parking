@@ -109,6 +109,8 @@ export default function BookingsPage() {
   );
   const [exporting, setExporting] = useState(false);
   const [exportingPdf, setExportingPdf] = useState(false);
+  const [exportDateFrom, setExportDateFrom] = useState("");
+  const [exportDateTo, setExportDateTo] = useState("");
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
   const [appliedDateFrom, setAppliedDateFrom] = useState("");
@@ -469,8 +471,8 @@ export default function BookingsPage() {
     status: activeTab ? (activeTab as BookingStatus) : undefined,
     search: appliedSearch || undefined,
     excludeIds: [],
-    dateFrom: appliedDateFrom || undefined,
-    dateTo: appliedDateTo || undefined,
+    dateFrom: exportDateFrom || undefined,
+    dateTo: exportDateTo || undefined,
   });
 
   const downloadBlob = (blob: Blob, fileName: string) => {
@@ -518,20 +520,23 @@ export default function BookingsPage() {
   const handleExportPdf = async () => {
     setExportingPdf(true);
     try {
-      const res = await api.getBookings({
-        status: activeTab || undefined,
-        page: 1,
-        limit: 10000,
-        search: appliedSearch || undefined,
-        dateFrom: appliedDateFrom || undefined,
-        dateTo: appliedDateTo || undefined,
-      });
+      const res = await api.getBookings(
+        {
+          status: activeTab || undefined,
+          page: 1,
+          limit: 10000,
+          search: appliedSearch || undefined,
+          dateFrom: exportDateFrom || undefined,
+          dateTo: exportDateTo || undefined,
+        },
+        selectedBusinessId,
+      );
       const opened = exportBookingsPdf(res.data.bookings, {
         exportDate: formatDateTime(new Date()),
         statusFilter: activeTab || undefined,
         searchQuery: appliedSearch || undefined,
-        dateFrom: appliedDateFrom || undefined,
-        dateTo: appliedDateTo || undefined,
+        dateFrom: exportDateFrom || undefined,
+        dateTo: exportDateTo || undefined,
         totalCount: res.data.total,
       });
       if (!opened) {
@@ -698,6 +703,57 @@ export default function BookingsPage() {
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
+          {/* Export date range — independent of the list search filter */}
+          <div
+            className="flex items-center gap-2 rounded-xl border px-3 py-2"
+            style={{ borderColor: "var(--border)", background: "var(--card)" }}
+          >
+            <span
+              className="text-xs font-medium"
+              style={{ color: "var(--muted-foreground)" }}
+            >
+              Export dates
+            </span>
+            <input
+              type="date"
+              value={exportDateFrom}
+              onChange={(e) => setExportDateFrom(e.target.value)}
+              className="h-8 rounded-lg border px-2 text-xs"
+              style={{
+                background: "var(--background)",
+                borderColor: "var(--border)",
+                color: "var(--foreground)",
+              }}
+            />
+            <span
+              className="text-xs"
+              style={{ color: "var(--muted-foreground)" }}
+            >
+              –
+            </span>
+            <input
+              type="date"
+              value={exportDateTo}
+              onChange={(e) => setExportDateTo(e.target.value)}
+              className="h-8 rounded-lg border px-2 text-xs"
+              style={{
+                background: "var(--background)",
+                borderColor: "var(--border)",
+                color: "var(--foreground)",
+              }}
+            />
+            {(exportDateFrom || exportDateTo) && (
+              <button
+                type="button"
+                onClick={() => { setExportDateFrom(""); setExportDateTo(""); }}
+                className="text-xs"
+                style={{ color: "var(--muted-foreground)" }}
+              >
+                ×
+              </button>
+            )}
+          </div>
+
           <div
             className="flex items-center gap-2 rounded-xl border px-3 py-2"
             style={{
