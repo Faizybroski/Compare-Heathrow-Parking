@@ -21,12 +21,12 @@ import {
   Loader2,
   CheckCircle2,
   Clock,
-  MapPin,
   Star,
   ArrowRight,
   RefreshCw,
   Car,
   Ban,
+  MapPin,
 } from "lucide-react";
 import { api } from "@/lib/api";
 
@@ -41,9 +41,7 @@ function ComparePageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const [startDate, setStartDate] = useState(
-    searchParams.get("start") || "",
-  );
+  const [startDate, setStartDate] = useState(searchParams.get("start") || "");
   const [endDate, setEndDate] = useState(searchParams.get("end") || "");
 
   const [bookingEnabled, setBookingEnabled] = useState<boolean | null>(null);
@@ -164,7 +162,6 @@ function ComparePageContent() {
 
       <div className="min-h-screen bg-muted/40 py-10">
         <div className="max-w-4xl mx-auto px-4 space-y-6">
-
           {/* ── DATE SELECTOR ──────────────────────────────────────────────── */}
           <Card className="rounded-2xl p-6 lg:p-8 bg-card border border-primary">
             <CardHeader className="p-0">
@@ -222,161 +219,32 @@ function ComparePageContent() {
               )}
             </div>
 
-            {BUSINESSES.map((b) => {
-              const bp = bizPrices[b.id];
-              const isDummy = b.businessId === null;
-              const hasPrice =
-                !isDummy && bp.totalPrice !== null && bp.totalDays !== null;
-
-              return (
-                <Card
+            {/* Row 1: first two cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              {BUSINESSES.slice(0, 2).map((b) => (
+                <ProviderCard
                   key={b.id}
-                  className={`rounded-2xl overflow-hidden border transition-shadow hover:shadow-md ${
-                    b.highlighted ? "border-primary/60" : "border-border"
-                  }`}
-                >
-                  {b.highlighted && (
-                    <div className="bg-primary text-white text-xs font-bold px-4 py-1.5 flex items-center gap-1.5">
-                      <Star className="h-3.5 w-3.5 fill-white" />
-                      Best Deal
-                    </div>
-                  )}
+                  b={b}
+                  bp={bizPrices[b.id]}
+                  hasDates={hasDates}
+                  onBook={handleBook}
+                />
+              ))}
+            </div>
 
-                  <CardContent className="p-5 sm:p-6">
-                    <div className="flex flex-col sm:flex-row gap-5">
-                      {/* Left: logo + info */}
-                      <div className="flex items-start gap-4 flex-1 min-w-0">
-                        <div
-                          className={`w-12 h-12 rounded-full flex items-center justify-center shrink-0 ${b.bg}`}
-                        >
-                          <Image
-                            src={b.img}
-                            alt={b.name}
-                            width={24}
-                            height={24}
-                          />
-                        </div>
-
-                        <div className="min-w-0 flex-1">
-                          <div className="flex flex-wrap items-center gap-2 mb-1">
-                            <h3 className="font-bold text-foreground text-base">
-                              {b.name}
-                            </h3>
-                            {b.tags.map((t) => (
-                              <Badge
-                                key={t}
-                                className="text-primary bg-primary/10 border-primary/20 text-[10px] px-2 py-0"
-                              >
-                                {t}
-                              </Badge>
-                            ))}
-                            {isDummy && (
-                              <Badge variant="secondary" className="text-[10px] px-2 py-0">
-                                Coming Soon
-                              </Badge>
-                            )}
-                          </div>
-
-                          <p className="text-sm text-muted-foreground mb-3">
-                            {b.rating}
-                          </p>
-
-                          {/* Feature grid */}
-                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                            <FeaturePill icon={<Clock className="h-3.5 w-3.5" />} label={`${b.transfer} transfer`} />
-                            <FeaturePill icon={<Car className="h-3.5 w-3.5" />} label={b.type} />
-                            <FeaturePill icon={<CheckCircle2 className="h-3.5 w-3.5" />} label={`${b.cancellation} cancel`} />
-                            <FeaturePill icon={<Shield className="h-3.5 w-3.5" />} label={b.security} />
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Right: price + CTA */}
-                      <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-3 sm:min-w-[160px]">
-                        <div className="text-right">
-                          {isDummy ? (
-                            <p className="text-sm text-muted-foreground">
-                              from £{b.dummyStartingPrice?.toFixed(2)}/day
-                            </p>
-                          ) : !hasDates ? (
-                            <p className="text-sm text-muted-foreground">
-                              Select dates for price
-                            </p>
-                          ) : bp.loading ? (
-                            <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                              <Loader2 className="h-4 w-4 animate-spin" />
-                              Calculating…
-                            </div>
-                          ) : bp.error ? (
-                            <p className="text-sm text-destructive">
-                              Price unavailable
-                            </p>
-                          ) : hasPrice ? (
-                            <>
-                              <p className="text-2xl font-bold text-primary leading-none">
-                                {formatPrice(bp.totalPrice!)}
-                              </p>
-                              <p className="text-xs text-muted-foreground mt-1">
-                                {formatDayCount(bp.totalDays!)}
-                              </p>
-                            </>
-                          ) : null}
-                        </div>
-
-                        <button
-                          type="button"
-                          disabled={isDummy || !hasDates || bp.loading}
-                          onClick={() =>
-                            b.businessId && handleBook(b.businessId)
-                          }
-                          className={`relative shrink-0 inline-flex items-center justify-center gap-2 rounded-full text-sm font-semibold px-5 py-2.5 transition-opacity overflow-hidden whitespace-nowrap
-                            ${
-                              isDummy || !hasDates || bp.loading
-                                ? "bg-muted text-muted-foreground cursor-not-allowed"
-                                : "text-white hover:opacity-90 cursor-pointer"
-                            }`}
-                          style={
-                            isDummy || !hasDates || bp.loading
-                              ? { background: "#e5e7eb" }
-                              : {
-                                  background: `radial-gradient(ellipse 80% 120% at 50% -10%, #AA10EC 2%, var(--color-primary) 100%)`,
-                                }
-                          }
-                        >
-                          {!(isDummy || !hasDates || bp.loading) && (
-                            <div className="absolute inset-0 z-0 pointer-events-none">
-                              <NoiseTexture
-                                frequency={1}
-                                octaves={10}
-                                slope={0.6}
-                                noiseOpacity={1}
-                              />
-                            </div>
-                          )}
-                          <span className="relative z-10 flex items-center gap-1.5">
-                            {isDummy ? (
-                              "Coming Soon"
-                            ) : !hasDates ? (
-                              "Select Dates"
-                            ) : bp.loading ? (
-                              <>
-                                <Loader2 className="h-4 w-4 animate-spin" />
-                                Loading…
-                              </>
-                            ) : (
-                              <>
-                                Book Now
-                                <ArrowRight className="h-4 w-4" />
-                              </>
-                            )}
-                          </span>
-                        </button>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
+            {/* Row 2: third card centered */}
+            {BUSINESSES.length > 2 && (
+              <div className="flex justify-center">
+                <div className="w-full sm:w-1/2">
+                  <ProviderCard
+                    b={BUSINESSES[2]}
+                    bp={bizPrices[BUSINESSES[2].id]}
+                    hasDates={hasDates}
+                    onBook={handleBook}
+                  />
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -384,16 +252,214 @@ function ComparePageContent() {
   );
 }
 
+const ACCENT: Record<string, string> = {
+  parkease: "#155263",
+  parkpro: "#e8825e",
+  heathrow: "#0694a2",
+};
+
+function ProviderCard({
+  b,
+  bp,
+  hasDates,
+  onBook,
+}: {
+  b: BusinessConfig;
+  bp: BizPrice;
+  hasDates: boolean;
+  onBook: (id: string) => void;
+}) {
+  const isDummy = b.businessId === null;
+  const hasPrice = !isDummy && bp.totalPrice !== null && bp.totalDays !== null;
+  const disabled = isDummy || !hasDates || bp.loading;
+  const accent = ACCENT[b.id] ?? "var(--color-primary)";
+
+  return (
+    <div
+      className={`group relative rounded-2xl overflow-hidden bg-card border flex flex-col transition-all duration-200 hover:-translate-y-1 hover:shadow-xl ${
+        b.highlighted ? "border-primary/60" : "border-border"
+      }`}
+    >
+      {/* Accent top bar */}
+      <div className="h-1.5 w-full" style={{ background: accent }} />
+
+      {/* Best-deal ribbon */}
+      {b.highlighted && (
+        <div
+          className="flex items-center gap-1.5 px-4 py-1.5 text-xs font-bold text-white"
+          style={{ background: accent }}
+        >
+          <Star className="h-3.5 w-3.5 fill-white" />
+          Best Deal
+        </div>
+      )}
+
+      <div className="p-6 flex flex-col flex-1 gap-5">
+        {/* Logo + name + rating */}
+        <div className="flex items-center gap-4">
+          <div
+            className="w-14 h-14 rounded-xl flex items-center justify-center shrink-0 shadow-sm"
+            style={{ background: `${accent}22` }}
+          >
+            <Image src={b.img} alt={b.name} width={32} height={32} />
+          </div>
+          <div className="min-w-0">
+            <h3 className="font-extrabold text-foreground text-lg leading-tight">
+              {b.name}
+            </h3>
+            <div className="flex items-center gap-1 mt-0.5">
+              {[...Array(5)].map((_, i) => (
+                <Star
+                  key={i}
+                  className="h-3 w-3 fill-yellow-400 text-yellow-400"
+                />
+              ))}
+              <span className="text-xs text-muted-foreground ml-1">
+                {b.rating}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Tags */}
+        <div className="flex flex-wrap gap-1.5">
+          {b.tags.map((t) => (
+            <Badge
+              key={t}
+              className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full border"
+              style={{
+                color: accent,
+                background: `${accent}18`,
+                borderColor: `${accent}40`,
+              }}
+            >
+              {t}
+            </Badge>
+          ))}
+          {isDummy && (
+            <Badge variant="secondary" className="text-[11px] px-2.5 py-0.5 rounded-full">
+              Coming Soon
+            </Badge>
+          )}
+        </div>
+
+        {/* Feature bullet list */}
+        <ul className="space-y-2 flex-1">
+          {b.features.map((f) => (
+            <li key={f} className="flex items-start gap-2.5 text-sm">
+              <CheckCircle2
+                className="h-4 w-4 shrink-0 mt-0.5"
+                style={{ color: accent }}
+              />
+              <span className="text-foreground/80 leading-snug">{f}</span>
+            </li>
+          ))}
+        </ul>
+
+        {/* Quick-info pills */}
+        <div className="grid grid-cols-2 gap-2">
+          <FeaturePill icon={<Clock className="h-3.5 w-3.5" />} label={`${b.transfer} transfer`} accent={accent} />
+          <FeaturePill icon={<Car className="h-3.5 w-3.5" />} label={b.type} accent={accent} />
+          <FeaturePill icon={<CheckCircle2 className="h-3.5 w-3.5" />} label={`${b.cancellation} cancel`} accent={accent} />
+          <FeaturePill icon={<Shield className="h-3.5 w-3.5" />} label={b.security} accent={accent} />
+        </div>
+
+        {/* Price + CTA */}
+        <div className="border-t border-border pt-4 space-y-3">
+          <div className="flex items-end justify-between gap-2">
+            <div>
+              {isDummy ? (
+                <p className="text-sm text-muted-foreground">
+                  from £{b.dummyStartingPrice?.toFixed(2)}/day
+                </p>
+              ) : !hasDates ? (
+                <p className="text-xs text-muted-foreground">
+                  Select dates for price
+                </p>
+              ) : bp.loading ? (
+                <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  Calculating…
+                </div>
+              ) : bp.error ? (
+                <p className="text-sm text-destructive">Unavailable</p>
+              ) : hasPrice ? (
+                <>
+                  <p className="text-3xl font-extrabold leading-none" style={{ color: accent }}>
+                    {formatPrice(bp.totalPrice!)}
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {formatDayCount(bp.totalDays!)}
+                  </p>
+                </>
+              ) : null}
+            </div>
+            {hasDates && hasPrice && (
+              <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                <MapPin className="h-3 w-3" />
+                {b.distance}
+              </div>
+            )}
+          </div>
+
+          <button
+            type="button"
+            disabled={disabled}
+            onClick={() => b.businessId && onBook(b.businessId)}
+            className={`relative w-full inline-flex items-center justify-center gap-2 rounded-xl text-sm font-bold py-3 transition-all overflow-hidden
+              ${disabled ? "cursor-not-allowed" : "hover:opacity-90 cursor-pointer"}`}
+            style={
+              disabled
+                ? { background: "#e5e7eb", color: "#9ca3af" }
+                : { background: accent, color: "#fff" }
+            }
+          >
+            {!disabled && (
+              <div className="absolute inset-0 z-0 pointer-events-none">
+                <NoiseTexture frequency={1} octaves={10} slope={0.6} noiseOpacity={0.5} />
+              </div>
+            )}
+            <span className="relative z-10 flex items-center gap-2">
+              {isDummy ? (
+                "Coming Soon"
+              ) : !hasDates ? (
+                "Select Dates"
+              ) : bp.loading ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Loading…
+                </>
+              ) : (
+                <>
+                  Book Now
+                  <ArrowRight className="h-4 w-4" />
+                </>
+              )}
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function FeaturePill({
   icon,
   label,
+  accent,
 }: {
   icon: React.ReactNode;
   label: string;
+  accent: string;
 }) {
   return (
-    <div className="flex items-center gap-1.5 bg-muted/60 rounded-lg px-2.5 py-1.5 text-xs text-foreground/80">
-      <span className="text-primary shrink-0">{icon}</span>
+    <div
+      className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs text-foreground/80"
+      style={{ background: `${accent}12` }}
+    >
+      <span style={{ color: accent }} className="shrink-0">
+        {icon}
+      </span>
       {label}
     </div>
   );

@@ -17,6 +17,7 @@ export type BusinessConfig = {
   type: string;
   cancellation: string;
   security: string;
+  features: string[];
   /** External booking URL for the business's own site; null for dummies */
   bookingUrl: string | null;
   highlighted: boolean;
@@ -37,9 +38,14 @@ export const BUSINESSES: BusinessConfig[] = [
     type: "Indoor Covered",
     cancellation: "Free",
     security: "24/7 Patrol",
+    features: [
+      "Meet & Greet Service All Terminals",
+      "Drop off and pick up at the terminal",
+      "Reliable, punctual & professional staff",
+      "Comprehensively insured drivers",
+    ],
     bookingUrl: "https://park-ease-eta.vercel.app/",
     highlighted: false,
-    // dummyStartingPrice: 4.9,
   },
   {
     id: "parkpro",
@@ -54,6 +60,11 @@ export const BUSINESSES: BusinessConfig[] = [
     type: "Indoor Covered",
     cancellation: "Free",
     security: "24/7 Patrol",
+    features: [
+      "Uniformed insured chauffeurs",
+      "Pickup & drop off at the terminal",
+      "No buses, no waiting — Meet & Greet",
+    ],
     bookingUrl: "https://parkpro.uk",
     highlighted: false,
   },
@@ -70,13 +81,22 @@ export const BUSINESSES: BusinessConfig[] = [
     type: "Open Air",
     cancellation: "Free",
     security: "24/7 Patrol",
+    features: [
+      "Meet & Greet Parking All Terminals",
+      "Price includes airport access charges",
+      "Premium Heathrow Meet & Greet service",
+      "Drive to terminal, hand over keys, no buses",
+      "Competitive price for ultimate convenience",
+    ],
     bookingUrl: "https://heathrowsafeparking.com",
     highlighted: false,
   },
 ];
 
 /** Returns the BusinessConfig for a given businessId, or undefined if not found. */
-export const getBrandByBusinessId = (businessId: string): BusinessConfig | undefined =>
+export const getBrandByBusinessId = (
+  businessId: string,
+): BusinessConfig | undefined =>
   BUSINESSES.find((b) => b.businessId === businessId);
 
 /** Fetch any business API endpoint with the given business ID header. */
