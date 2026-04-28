@@ -61,9 +61,11 @@ export const BUSINESSES: BusinessConfig[] = [
     cancellation: "Free",
     security: "24/7 Patrol",
     features: [
+      "No buses, no waiting — Meet & Greet",
       "Uniformed insured chauffeurs",
       "Pickup & drop off at the terminal",
-      "No buses, no waiting — Meet & Greet",
+      "Competitive Pricing for our customers",
+      "Airport levy fees not included."
     ],
     bookingUrl: "https://parkpro.uk",
     highlighted: false,
@@ -82,8 +84,7 @@ export const BUSINESSES: BusinessConfig[] = [
     cancellation: "Free",
     security: "24/7 Patrol",
     features: [
-      "Meet & Greet Parking All Terminals",
-      "Price includes airport access charges",
+      "VIP Meet & Greet Parking All Terminals",
       "Premium Heathrow Meet & Greet service",
       "Drive to terminal, hand over keys, no buses",
       "Competitive price for ultimate convenience",
