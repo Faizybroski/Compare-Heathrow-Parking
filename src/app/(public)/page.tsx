@@ -859,7 +859,7 @@ export default function CompareHeathrowParking() {
                   className="hidden lg:block
             w-full 
             max-w-[420px] sm:max-w-[520px] 
-            lg:max-w-none lg:w-[600px] xl:w-[800px] 
+            lg:max-w-none lg:w-[600px] xl:w-[700px] 
             object-contain drop-shadow-xl
           "
                 />
