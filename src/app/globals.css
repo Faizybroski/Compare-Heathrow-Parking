@@ -4,7 +4,16 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@font-face {
+  font-family: "roboto";
+  src: url("/font/Roboto-BlackItalic.ttf") format("truetype");
+  font-weight: 900;
+  font-style: italic;
+  font-display: swap;
+}
+
 :root {
+  --font-roboto: "roboto", sans-serif;
   --primary: oklch(41.556% 0.18461 312.692);
   --primarylight: oklch(56.913% 0.28049 310.788);
   --input: oklch(98.069% 0.01164 59.289);
@@ -46,6 +55,7 @@
 }
 
 .dark {
+  --font-roboto: "roboto", sans-serif;
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
   --primary: oklch(41.556% 0.18461 312.692);
@@ -266,15 +276,32 @@ html {
 }
 
 @layer utilities {
-  .font-nasal {
-    font-family: "Nasalization", sans-serif;
+  .font-roboto {
+    font-family: "roboto", sans-serif;
   }
 
-  /* Gradient + noise stacked — noise blends over the gradient via soft-light */
-  /* .bg-purple-grad {
-    background-image: var(--noise), linear-gradient(135deg, #aa10ec 0%, #8711ba 50%, #641188 100%);
-    background-blend-mode: soft-light, normal;
-  } */
+  /* Main purple radial gradient — buttons, stats bar, provider headers, CTA */
+  .bg-purple-grad {
+    background: radial-gradient(ellipse 80% 120% at 50% -10%, #c084fc 2%, var(--color-primary) 100%);
+  }
+
+  /* Lighter purple grad — used in some hero variants */
+  .bg-purple-grad-light {
+    background: radial-gradient(ellipse 80% 120% at 50% -10%, var(--color-primary) 2%, var(--color-primary) 100%);
+  }
+
+  /* Hero dark overlay */
+  .hero-overlay {
+    background: rgba(13, 13, 26, 0.72);
+  }
+
+  /* Gradient text — heading accent words */
+  .text-gradient-purple {
+    background: linear-gradient(90deg, #c084fc, #a855f7);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
 
   .bg-glass {
     background: rgba(255, 255, 255, 0.08);

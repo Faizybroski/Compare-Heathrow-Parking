@@ -61,19 +61,21 @@ export function DateTimePicker({ value, onChange, homepage = false }: Props) {
       <PopoverTrigger asChild className="active:bg-primary">
         <Button
           variant="outline"
-          className="w-full h-11 rounded-md justify-start text-left font-normal border border-ring bg-transparent backdrop-blur-md hover:bg-white/20 active:bg-white/20 data-[state=open]:bg-white/20 focus-visible:border-primary focus-visible:ring-3 focus-visible:ring-primary/50 data-[state=open]:bg-white/20 data-[state=open]:border-primary data-[state=open]:ring-3 data-[state=open]:ring-primary/50"
-                  >
+          className={`w-full h-11 rounded-md justify-start text-left font-normal border border-ring bg-transparent backdrop-blur-md hover:bg-white/20 active:bg-white/20  focus-visible:border-primary focus-visible:ring-3 focus-visible:ring-primary/50 data-[state=open]:bg-white/20 data-[state=open]:border-primary data-[state=open]:ring-3 data-[state=open]:ring-primary/50 ${homepage ? "bg-white hover:bg-white active:bg-white data-[state=open]:bg-white" : ""}`}
+        >
           <CalendarIcon className="mr-2 h-4 w-4 text-primary" />
 
           {date ? (
             <>
-              <span className={` ${homepage ? "text-white" : "text-primary"}`}>{format(date, "PPP")}</span>
-              <span className={`mx-2   ${homepage ? "text-white" : "text-primary"}`}>•</span>
+              <span className={` text-primary`}>{format(date, "PPP")}</span>
+              <span className={`mx-2   text-primary`}>•</span>
               {/* <Clock className={`mr-1 h-4 w-4 text-white`} /> */}
-              <span className={` ${homepage ? "text-white" : "text-primary"}`}>{time || "00:00"}</span>
+              <span className={`text-primary`}>{time || "00:00"}</span>
             </>
           ) : (
-            <span className={`${homepage ? "text-white/50" : "text-ring"}`}>Pick date & time</span>
+            <span className={`${homepage ? "text-primary/50" : "text-ring"}`}>
+              Pick date & time
+            </span>
           )}
         </Button>
       </PopoverTrigger>
@@ -97,9 +99,7 @@ export function DateTimePicker({ value, onChange, homepage = false }: Props) {
 
           {/* Time list */}
           <div className="p-3  max-h-72 overflow-y-auto no-scrollbar">
-            <p className="text-sm text-primary font-medium mb-2">
-              Select time
-            </p>
+            <p className="text-sm text-primary font-medium mb-2">Select time</p>
 
             <div className="flex flex-col gap-1">
               {timeSlots.map((slot) => (

@@ -332,7 +332,7 @@ function BookingFormContent() {
           </p>
           <a
             href="/contact"
-            className="inline-flex items-center justify-center rounded-lg border border-input bg-background px-4 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground"
+            className="inline-flex items-center justify-center rounded-md border border-primary/30 bg-background px-5 py-2.5 text-sm font-semibold text-primary hover:bg-primary/5 transition-colors"
           >
             Contact Us
           </a>
@@ -1003,73 +1003,55 @@ function BookingFormContent() {
                 const isPending = pendingBiz === b.businessId;
                 const hasPrice =
                   !isDummy && bp.totalPrice !== null && bp.totalDays !== null;
+                const isDisabled =
+                  isDummy || isPending || bp.loading || !hasDates || !!pendingBiz;
 
                 return (
-                  <button
-                    key={b.id}
-                    type="button"
-                    disabled={
-                      isDummy ||
-                      isPending ||
-                      bp.loading ||
-                      !hasDates ||
-                      !!pendingBiz
-                    }
-                    onClick={() => b.businessId && handleBookWith(b.businessId)}
-                    className={`relative w-full inline-flex items-center justify-center gap-2 rounded-xl text-base font-semibold px-6 py-3.5 transition-opacity overflow-hidden
-                          ${
-                            isDummy
-                              ? "bg-muted text-muted-foreground cursor-not-allowed"
-                              : !hasDates || (!!pendingBiz && !isPending)
-                                ? "bg-muted text-muted-foreground cursor-not-allowed"
-                                : "bg-primary text-white hover:opacity-90"
-                          }`}
-                    style={
-                      isDummy || !hasDates || (!!pendingBiz && !isPending)
-                        ? {
-                            background: "#e5e7eb", // muted fallback
-                          }
-                        : {
-                            background: `
-            radial-gradient(ellipse 80% 120% at 50% -10%, #AA10EC 2%, var(--color-primary) 100%)
-          `,
-                          }
-                    }
-                  >
-                    {!(
-                      isDummy ||
-                      !hasDates ||
-                      (!!pendingBiz && !isPending)
-                    ) && (
-                      <div className="absolute inset-0 z-0 pointer-events-none">
-                        <NoiseTexture
-                          frequency={1}
-                          octaves={10}
-                          slope={0.6}
-                          noiseOpacity={1}
-                        />
-                      </div>
-                    )}
-                    {isPending ? (
-                      <>
-                        <Loader2 className="h-5 w-5 animate-spin" />
-                        Redirecting to {b.name}…
-                      </>
-                    ) : isDummy ? (
-                      `${b.name} — Coming Soon`
-                    ) : !hasDates ? (
-                      `Book with ${b.name} — Select dates first`
-                    ) : bp.loading ? (
-                      <>
-                        <Loader2 className="h-5 w-5 animate-spin" />
-                        {`Book with ${b.name} — Calculating price…`}
-                      </>
-                    ) : hasPrice ? (
-                      `Book with ${b.name} · ${formatPrice(bp.totalPrice!)} for ${formatDayCount(bp.totalDays!)}`
-                    ) : (
-                      `Book with ${b.name}`
-                    )}
-                  </button>
+                  <div key={b.id}>
+                    <button
+                      type="button"
+                      disabled={isDisabled}
+                      onClick={() => b.businessId && handleBookWith(b.businessId)}
+                      className={`relative w-full inline-flex items-center justify-center gap-2 rounded-md text-base font-semibold px-6 py-3.5 overflow-hidden transition-opacity
+                        ${isDisabled ? "cursor-not-allowed opacity-60" : "cursor-pointer hover:opacity-90"}`}
+                      style={
+                        isDummy || !hasDates || (!!pendingBiz && !isPending)
+                          ? { background: "#e5e7eb", color: "#9ca3af" }
+                          : {
+                              background:
+                                "radial-gradient(ellipse 80% 120% at 50% -10%, #AA10EC 2%, var(--color-primary) 100%)",
+                              color: "#fff",
+                            }
+                      }
+                    >
+                      {!(isDummy || !hasDates || (!!pendingBiz && !isPending)) && (
+                        <div className="absolute inset-0 z-0 pointer-events-none">
+                          <NoiseTexture frequency={1} octaves={10} slope={0.6} noiseOpacity={1} />
+                        </div>
+                      )}
+                      <span className="relative z-10 flex items-center gap-2">
+                        {isPending ? (
+                          <>
+                            <Loader2 className="h-5 w-5 animate-spin" />
+                            Redirecting to {b.name}…
+                          </>
+                        ) : isDummy ? (
+                          `${b.name} — Coming Soon`
+                        ) : !hasDates ? (
+                          `Book with ${b.name} — Select dates first`
+                        ) : bp.loading ? (
+                          <>
+                            <Loader2 className="h-5 w-5 animate-spin" />
+                            {`Book with ${b.name} — Calculating price…`}
+                          </>
+                        ) : hasPrice ? (
+                          `Book with ${b.name} · ${formatPrice(bp.totalPrice!)} for ${formatDayCount(bp.totalDays!)}`
+                        ) : (
+                          `Book with ${b.name}`
+                        )}
+                      </span>
+                    </button>
+                  </div>
                 );
               })}
 

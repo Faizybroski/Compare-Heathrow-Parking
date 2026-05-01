@@ -28,7 +28,9 @@ import {
   Ban,
   MapPin,
 } from "lucide-react";
+import { motion } from "framer-motion";
 import { api } from "@/lib/api";
+import PageHero from "@/components/shared/PageHero";
 
 type BizPrice = {
   totalPrice: number | null;
@@ -135,7 +137,7 @@ function ComparePageContent() {
           </p>
           <a
             href="/contact"
-            className="inline-flex items-center justify-center rounded-lg border border-input bg-background px-4 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground"
+            className="inline-flex items-center justify-center rounded-md border border-primary/30 bg-background px-5 py-2.5 text-sm font-semibold text-primary hover:bg-primary/5 transition-colors"
           >
             Contact Us
           </a>
@@ -147,18 +149,10 @@ function ComparePageContent() {
   return (
     <>
       {/* ── HERO ─────────────────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden bg-[url('/hero.svg')] bg-cover bg-center">
-        <div className="absolute inset-0 bg-black/50" />
-        <div className="relative z-10 max-w-4xl mx-auto px-4 py-20 pt-32 text-center text-white">
-          <h1 className="text-4xl sm:text-5xl font-extrabold mb-3 drop-shadow-lg">
-            Compare Parking Prices
-          </h1>
-          <p className="text-lg opacity-85 max-w-xl mx-auto drop-shadow">
-            Select your dates and choose the best deal from our trusted
-            providers
-          </p>
-        </div>
-      </section>
+      <PageHero
+        title="Compare Parking Prices"
+        subtitle="Select your dates and choose the best deal from our trusted providers"
+      />
 
       <div className="min-h-screen bg-muted/40 py-10">
         <div className="max-w-4xl mx-auto px-4 space-y-6">
@@ -275,9 +269,11 @@ function ProviderCard({
   const accent = ACCENT[b.id] ?? "var(--color-primary)";
 
   return (
-    <div
-      className={`group relative rounded-2xl overflow-hidden bg-card border flex flex-col transition-all duration-200 hover:-translate-y-1 hover:shadow-xl ${
-        b.highlighted ? "border-primary/60" : "border-border"
+    <motion.div
+      whileHover={{ y: -8, scale: 1.02 }}
+      transition={{ type: "spring", stiffness: 280, damping: 18 }}
+      className={`group relative rounded-2xl overflow-hidden bg-card border flex flex-col shadow-sm ${
+        b.highlighted ? "border-primary/60 shadow-primary/10" : "border-border"
       }`}
     >
       {/* Accent top bar */}
@@ -402,12 +398,14 @@ function ProviderCard({
             )}
           </div>
 
-          <button
+          <motion.button
             type="button"
             disabled={disabled}
             onClick={() => b.businessId && onBook(b.businessId)}
-            className={`relative w-full inline-flex items-center justify-center gap-2 rounded-xl text-sm font-bold py-3 transition-all overflow-hidden
-              ${disabled ? "cursor-not-allowed" : "hover:opacity-90 cursor-pointer"}`}
+            whileHover={!disabled ? { scale: 1.02 } : {}}
+            whileTap={!disabled ? { scale: 0.97 } : {}}
+            className={`relative w-full inline-flex items-center justify-center gap-2 rounded-md text-sm font-bold py-3 overflow-hidden
+              ${disabled ? "cursor-not-allowed" : "cursor-pointer"}`}
             style={
               disabled
                 ? { background: "#e5e7eb", color: "#9ca3af" }
@@ -436,10 +434,10 @@ function ProviderCard({
                 </>
               )}
             </span>
-          </button>
+          </motion.button>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
