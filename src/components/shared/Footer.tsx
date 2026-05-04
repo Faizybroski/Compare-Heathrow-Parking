@@ -101,7 +101,7 @@ export default function Footer() {
               </div> */}
 
               <div className="flex items-center gap-3 text-white opacity-70 hover:opacity-100 transition">
-                <a href="tel:07508624155">07508624155</a>
+                <a href="tel:07927970960">07927970960</a>
               </div>
 
               <div className="flex items-center gap-3 text-white opacity-70 hover:opacity-100 transition">

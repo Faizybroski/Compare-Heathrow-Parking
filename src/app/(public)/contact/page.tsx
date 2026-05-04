@@ -40,7 +40,7 @@ const items = [
   {
     icon: Phone,
     title: "Phone",
-    value: "07508624155",
+    value: "07927970960",
   },
   {
     icon: MapPin,
