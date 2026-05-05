@@ -517,7 +517,7 @@ export default function CompareHeathrowParking() {
               >
                 <Link
                   href="/compare"
-                  className="bg-purple-grad relative inline-flex items-center gap-2 px-7 py-3.5 rounded-md text-white font-semibold text-base overflow-hidden"
+                  className="block sm:hidden bg-purple-grad relative inline-flex items-center gap-2 px-7 py-3.5 rounded-md text-white font-semibold text-base overflow-hidden"
                 >
                   <div className="absolute inset-0 pointer-events-none">
                     <NoiseTexture
@@ -1067,7 +1067,10 @@ export default function CompareHeathrowParking() {
 
                             {/* Get Started */}
                             <Link
-                              href="/compare"
+                              href={{
+                                pathname: "/book",
+                                query: { business: b.businessId },
+                              }}
                               className="relative z-10 block w-full bg-white text-primary font-bold text-sm text-center py-[11px] rounded-2xl shadow hover:bg-white/92 active:scale-[0.97] transition-all duration-150"
                               onClick={(e) => e.stopPropagation()}
                             >

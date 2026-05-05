@@ -44,7 +44,7 @@ export const BUSINESSES: BusinessConfig[] = [
       "Reliable, punctual & professional staff",
       "Comprehensively insured drivers",
     ],
-    bookingUrl: "https://park-ease-eta.vercel.app/",
+    bookingUrl: "https://parkease.uk/",
     highlighted: false,
   },
   {
