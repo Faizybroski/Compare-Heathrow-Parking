@@ -17,7 +17,15 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { CheckCircle2, AlertCircle, Mail, Phone, MapPin, Clock, ArrowRight } from "lucide-react";
+import {
+  CheckCircle2,
+  AlertCircle,
+  Mail,
+  Phone,
+  MapPin,
+  Clock,
+  ArrowRight,
+} from "lucide-react";
 import { NoiseTexture } from "@/components/ui/noise-texture";
 import { api } from "@/lib/api";
 import PageHero from "@/components/shared/PageHero";
@@ -38,15 +46,16 @@ const items = [
     value: "info@compareheathrowparking.uk",
   },
   {
+    icon: MessageCircle,
+    title: "WhatsApp",
+    value: "07927970960",
+  },
+  {
     icon: Phone,
     title: "Phone",
     value: "07927970960",
   },
-  {
-    icon: MapPin,
-    title: "Address",
-    value: "103 Pennine Way UB3 5LJ",
-  },
+
   {
     icon: Clock,
     title: "Hours",
@@ -80,7 +89,6 @@ export default function ContactPage() {
       <section className="py-16 sm:py-20 px-4 sm:px-8 lg:px-16">
         <div className="max-w-4xl mx-auto">
           <div className="grid md:grid-cols-2 gap-8">
-
             {/* Form card */}
             <motion.div
               initial={{ opacity: 0, x: -32 }}
@@ -99,13 +107,17 @@ export default function ContactPage() {
                     <Alert variant="success" className="mb-5">
                       <CheckCircle2 className="h-4 w-4 text-green-500" />
                       <AlertDescription>
-                        Message sent successfully. We&apos;ll get back to you soon.
+                        Message sent successfully. We&apos;ll get back to you
+                        soon.
                       </AlertDescription>
                     </Alert>
                   )}
 
                   <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                    <form
+                      onSubmit={form.handleSubmit(onSubmit)}
+                      className="space-y-4"
+                    >
                       <FormField
                         control={form.control}
                         name="name"
@@ -126,7 +138,11 @@ export default function ContactPage() {
                           <FormItem>
                             <FormLabel>Your Email</FormLabel>
                             <FormControl>
-                              <Input type="email" placeholder="john@example.com" {...field} />
+                              <Input
+                                type="email"
+                                placeholder="john@example.com"
+                                {...field}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -139,7 +155,11 @@ export default function ContactPage() {
                           <FormItem>
                             <FormLabel>Your Message</FormLabel>
                             <FormControl>
-                              <Textarea rows={4} placeholder="Type your message..." {...field} />
+                              <Textarea
+                                rows={4}
+                                placeholder="Type your message..."
+                                {...field}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -155,17 +175,27 @@ export default function ContactPage() {
                         </Alert>
                       )}
 
-                      <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}>
+                      <motion.div
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.97 }}
+                      >
                         <button
                           type="submit"
                           disabled={form.formState.isSubmitting}
                           className="bg-purple-grad relative w-full inline-flex items-center justify-center gap-2 py-3 rounded-md text-white font-semibold text-sm overflow-hidden shadow-md disabled:opacity-60 disabled:cursor-not-allowed"
                         >
                           <div className="absolute inset-0 pointer-events-none">
-                            <NoiseTexture frequency={1} octaves={10} slope={0.6} noiseOpacity={1} />
+                            <NoiseTexture
+                              frequency={1}
+                              octaves={10}
+                              slope={0.6}
+                              noiseOpacity={1}
+                            />
                           </div>
                           <span className="relative z-10 flex items-center gap-2">
-                            {form.formState.isSubmitting ? "Sending..." : (
+                            {form.formState.isSubmitting ? (
+                              "Sending..."
+                            ) : (
                               <>
                                 Send Message
                                 <ArrowRight className="w-4 h-4" />
@@ -195,7 +225,11 @@ export default function ContactPage() {
                     key={i}
                     variants={{
                       hidden: { opacity: 0, x: 32 },
-                      visible: { opacity: 1, x: 0, transition: { duration: 0.5, ease } },
+                      visible: {
+                        opacity: 1,
+                        x: 0,
+                        transition: { duration: 0.5, ease },
+                      },
                     }}
                     whileHover={{ y: -4, scale: 1.02 }}
                     transition={{ type: "spring", stiffness: 300, damping: 20 }}
@@ -209,14 +243,17 @@ export default function ContactPage() {
                       <Icon className="w-5 h-5 text-primary" />
                     </motion.div>
                     <div>
-                      <h3 className="font-bold text-sm text-foreground">{item.title}</h3>
-                      <p className="text-sm text-muted-foreground">{item.value}</p>
+                      <h3 className="font-bold text-sm text-foreground">
+                        {item.title}
+                      </h3>
+                      <p className="text-sm text-muted-foreground">
+                        {item.value}
+                      </p>
                     </div>
                   </motion.div>
                 );
               })}
             </motion.div>
-
           </div>
         </div>
       </section>
