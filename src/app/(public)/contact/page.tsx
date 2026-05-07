@@ -22,7 +22,7 @@ import {
   AlertCircle,
   Mail,
   Phone,
-  MapPin,
+  MessageCircle,
   Clock,
   ArrowRight,
 } from "lucide-react";
