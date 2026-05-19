@@ -391,11 +391,12 @@ export default function BookingsPage() {
   const handleToggle = async () => {
     if (selectedBusinessId === "compare") {
       showFeedback({
-          type: "error",
-          message: "Unable to toggle booking because you selected all businesses. Select a specific business to toggle bookings.",
-        });
-    return
-    };
+        type: "error",
+        message:
+          "Unable to toggle booking because you selected all businesses. Select a specific business to toggle bookings.",
+      });
+      return;
+    }
     setToggleLoading(true);
     try {
       const res = await api.setBookingToggle(
@@ -745,7 +746,10 @@ export default function BookingsPage() {
             {(exportDateFrom || exportDateTo) && (
               <button
                 type="button"
-                onClick={() => { setExportDateFrom(""); setExportDateTo(""); }}
+                onClick={() => {
+                  setExportDateFrom("");
+                  setExportDateTo("");
+                }}
                 className="text-xs"
                 style={{ color: "var(--muted-foreground)" }}
               >
@@ -844,47 +848,47 @@ export default function BookingsPage() {
         </div>
       )}
       {selectedBusinessId != "compare" && (
-      <div
-        className="flex items-center justify-between rounded-2xl border p-4"
-        style={{ background: "var(--card)", borderColor: "var(--border)" }}
-      >
-        <div>
-          <p
-            className="text-sm font-semibold"
-            style={{ color: "var(--foreground)" }}
-          >
-            Accept New Bookings
-          </p>
-          <p
-            className="mt-0.5 text-xs"
-            style={{ color: "var(--muted-foreground)" }}
-          >
-            {bookingEnabled
-              ? "Customers can currently book parking spaces."
-              : "Booking is disabled and customers cannot make new reservations."}
-          </p>
-        </div>
-
-        <button
-          onClick={handleToggle}
-          disabled={toggleLoading}
-          className={`relative flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold transition-all disabled:opacity-60 ${
-            bookingEnabled
-              ? "bg-green-500 text-white hover:bg-green-600"
-              : "bg-red-500 text-white hover:bg-red-600"
-          }`}
+        <div
+          className="flex items-center justify-between rounded-2xl border p-4"
+          style={{ background: "var(--card)", borderColor: "var(--border)" }}
         >
-          {toggleLoading ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
-          ) : bookingEnabled ? (
-            <ToggleRight className="h-5 w-5" />
-          ) : (
-            <ToggleLeft className="h-5 w-5" />
-          )}
-          {bookingEnabled ? "Enabled" : "Disabled"}
-        </button>
-      </div>
-)}
+          <div>
+            <p
+              className="text-sm font-semibold"
+              style={{ color: "var(--foreground)" }}
+            >
+              Accept New Bookings
+            </p>
+            <p
+              className="mt-0.5 text-xs"
+              style={{ color: "var(--muted-foreground)" }}
+            >
+              {bookingEnabled
+                ? "Customers can currently book parking spaces."
+                : "Booking is disabled and customers cannot make new reservations."}
+            </p>
+          </div>
+
+          <button
+            onClick={handleToggle}
+            disabled={toggleLoading}
+            className={`relative flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold transition-all disabled:opacity-60 ${
+              bookingEnabled
+                ? "bg-green-500 text-white hover:bg-green-600"
+                : "bg-red-500 text-white hover:bg-red-600"
+            }`}
+          >
+            {toggleLoading ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : bookingEnabled ? (
+              <ToggleRight className="h-5 w-5" />
+            ) : (
+              <ToggleLeft className="h-5 w-5" />
+            )}
+            {bookingEnabled ? "Enabled" : "Disabled"}
+          </button>
+        </div>
+      )}
 
       {/* ── BUSINESS SELECTOR ─────────────────────────────────────── */}
       <div
@@ -901,16 +905,23 @@ export default function BookingsPage() {
           type="button"
           onClick={() => {
             // if (b.businessId && b.businessId !== selectedBusinessId) {
-              setSelectedBusinessId("compare");
-              clearSelection();
-              setPage(1);
+            setSelectedBusinessId("compare");
+            clearSelection();
+            setPage(1);
             // }
           }}
           className="inline-flex items-center gap-2 rounded-xl border px-3 py-1.5 text-sm font-medium transition-all"
           style={{
-            borderColor: selectedBusinessId === "compare" ? "var(--primary)" : "var(--border)",
-            background: selectedBusinessId === "compare" ? "var(--primary)" : "var(--background)",
-            color: selectedBusinessId === "compare" ? "#fff" : "var(--foreground)",
+            borderColor:
+              selectedBusinessId === "compare"
+                ? "var(--primary)"
+                : "var(--border)",
+            background:
+              selectedBusinessId === "compare"
+                ? "var(--primary)"
+                : "var(--background)",
+            color:
+              selectedBusinessId === "compare" ? "#fff" : "var(--foreground)",
           }}
         >
           All
@@ -918,30 +929,30 @@ export default function BookingsPage() {
         {realBusinesses.map((b) => {
           const active = selectedBusinessId === b.businessId;
           return (
-              <button
-                key={b.id}
-                type="button"
-                onClick={() => {
-                  if (b.businessId && b.businessId !== selectedBusinessId) {
-                    setSelectedBusinessId(b.businessId);
-                    clearSelection();
-                    setPage(1);
-                  }
-                }}
-                className="inline-flex items-center gap-2 rounded-xl border px-3 py-1.5 text-sm font-medium transition-all"
-                style={{
-                  borderColor: active ? "var(--primary)" : "var(--border)",
-                  background: active ? "var(--primary)" : "var(--background)",
-                  color: active ? "#fff" : "var(--foreground)",
-                }}
+            <button
+              key={b.id}
+              type="button"
+              onClick={() => {
+                if (b.businessId && b.businessId !== selectedBusinessId) {
+                  setSelectedBusinessId(b.businessId);
+                  clearSelection();
+                  setPage(1);
+                }
+              }}
+              className="inline-flex items-center gap-2 rounded-xl border px-3 py-1.5 text-sm font-medium transition-all"
+              style={{
+                borderColor: active ? "var(--primary)" : "var(--border)",
+                background: active ? "var(--primary)" : "var(--background)",
+                color: active ? "#fff" : "var(--foreground)",
+              }}
+            >
+              <div
+                className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 ${b.bg}`}
               >
-                <div
-                  className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 ${b.bg}`}
-                >
-                  <Image src={b.img} alt={b.name} width={12} height={12} />
-                </div>
-                {b.name}
-              </button>
+                <Image src={b.img} alt={b.name} width={12} height={12} />
+              </div>
+              {b.name}
+            </button>
           );
         })}
       </div>
@@ -1484,6 +1495,10 @@ export default function BookingsPage() {
               <Row label="Name" value={selectedBooking.userName} />
               <Row label="Email" value={selectedBooking.userEmail} />
               <Row label="Phone" value={selectedBooking.userPhone} />
+              <Row
+                label="Booked At"
+                value={formatDateTime(selectedBooking.createdAt)}
+              />
               <Row
                 label="Vehicle"
                 value={`${selectedBooking.carMake} ${selectedBooking.carModel} (${selectedBooking.carColor})`}
