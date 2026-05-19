@@ -37,7 +37,7 @@ export default function RootLayout({
         />
         {/* <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18050069615">
 </script> */}
-{/* <script>
+        {/* <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
@@ -56,6 +56,22 @@ export default function RootLayout({
             gtag('config', 'AW-18050069615');
           `}
         </Script>
+        <script>
+          {`
+            function gtag_report_conversion(url) {
+              var callback = function () {
+                if (typeof(url) != 'undefined') {
+                  window.location = url;
+                }
+              };
+              gtag('event', 'conversion', {
+                  'send_to': 'AW-18169179020/yee9CIbru68cEIzX3tdD',
+                  'event_callback': callback
+              });
+              return false;
+            }
+          `}
+        </script>
       </head>
       <body className="antialiased min-h-screen flex flex-col">
         {/* <LayoutClient> */}
