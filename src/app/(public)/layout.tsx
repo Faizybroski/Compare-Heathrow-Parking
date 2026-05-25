@@ -2,6 +2,7 @@
 
 import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
+import WhatsAppFAB from "@/components/shared/WhatsAppFAB";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
@@ -18,6 +19,7 @@ export default function LayoutClient({
         <Navbar />
         <main className={`flex-1`}>{children}</main>
         <Footer />
+        <WhatsAppFAB />
       </QueryClientProvider>
     </>
   );
